@@ -39,6 +39,8 @@ const SIGN_IN = gql`
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 const AuthProvider: React.FC = ({ children }) => {
   const [authData, setAuthData] = useState<AuthState>({} as AuthState);
+  const [loading, setLoading] = useState(true);
+
   const [signIn] = useMutation(SIGN_IN, {
     onCompleted: async (data) => {
       const { token, user } = data.signIn;
@@ -58,8 +60,6 @@ const AuthProvider: React.FC = ({ children }) => {
       }
     },
   });
-
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadStoredData(): Promise<void> {
