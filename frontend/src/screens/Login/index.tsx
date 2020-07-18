@@ -1,35 +1,56 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useCallback } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
 import Background from '../../components/Background';
 import Logo from '../../components/Logo';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import BackButton from '../../components/BackButton';
+
 import { theme } from '../../core/theme';
 import { emailValidator, passwordValidator } from '../../core/utils';
-import { Navigation } from '../../types';
+import { useAuth } from '../../hooks/auth';
 
-type Props = {
-  navigation: Navigation;
-};
-
-const Login = ({ navigation }: Props) => {
+const Login: React.FC = () => {
+  const navigation = useNavigation();
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
+  const { handleSignIn } = useAuth();
 
-  const _onLoginPressed = () => {
-    const emailError = emailValidator(email.value);
-    const passwordError = passwordValidator(password.value);
+  const _onLoginPressed = useCallback(
+    async (email, password) => {
+      const emailError = await emailValidator(email.value);
+      const passwordError = await passwordValidator(password.value);
 
-    if (emailError || passwordError) {
-      setEmail({ ...email, error: emailError });
-      setPassword({ ...password, error: passwordError });
-      return;
-    }
+      if (emailError || passwordError) {
+        setEmail({ ...email, error: emailError });
+        setPassword({ ...password, error: passwordError });
+        return;
+      }
 
-    navigation.navigate('Dashboard');
-  };
+      try {
+        await handleSignIn({
+          email: email.value,
+          password: password.value,
+        });
+      } catch (err) {
+        if (err.message.includes('email')) {
+          setEmail({ ...email, error: err.message });
+          return;
+        }
+
+        if (err.message.includes('password')) {
+          setPassword({ ...password, error: err.message });
+          return;
+        }
+
+        setEmail({ ...email, error: err.message });
+      }
+    },
+    [handleSignIn]
+  );
 
   return (
     <Background>
@@ -70,7 +91,7 @@ const Login = ({ navigation }: Props) => {
         </TouchableOpacity>
       </View>
 
-      <Button mode="contained" onPress={_onLoginPressed}>
+      <Button mode="contained" onPress={() => _onLoginPressed(email, password)}>
         Login
       </Button>
 

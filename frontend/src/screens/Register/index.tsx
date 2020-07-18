@@ -1,5 +1,7 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { gql, useMutation } from '@apollo/client';
 import Background from '../../components/Background';
 import Logo from '../../components/Logo';
 import Header from '../../components/Header';
@@ -7,36 +9,43 @@ import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import BackButton from '../../components/BackButton';
 import { theme } from '../../core/theme';
-import { Navigation } from '../../types';
-import {
-  emailValidator,
-  passwordValidator,
-  nameValidator,
-} from '../../core/utils';
+import { emailValidator, passwordValidator } from '../../core/utils';
 
-type Props = {
-  navigation: Navigation;
-};
+const SIGN_UP = gql`
+  mutation SignUp($email: String!, $password: String!) {
+    signUp(createUserInput: { email: $email, password: $password })
+  }
+`;
 
-const Register = ({ navigation }: Props) => {
-  const [name, setName] = useState({ value: '', error: '' });
+const Register: React.FC = () => {
+  const navigation = useNavigation();
+  const [signUp] = useMutation(SIGN_UP);
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
 
-  const _onSignUpPressed = () => {
-    const nameError = nameValidator(name.value);
-    const emailError = emailValidator(email.value);
-    const passwordError = passwordValidator(password.value);
+  const _onSignUpPressed = useCallback(
+    async (email, password) => {
+      const emailError = emailValidator(email.value);
+      const passwordError = passwordValidator(password.value);
 
-    if (emailError || passwordError || nameError) {
-      setName({ ...name, error: nameError });
-      setEmail({ ...email, error: emailError });
-      setPassword({ ...password, error: passwordError });
-      return;
-    }
+      if (emailError || passwordError) {
+        setEmail({ ...email, error: emailError });
+        setPassword({ ...password, error: passwordError });
+        return;
+      }
 
-    navigation.navigate('Dashboard');
-  };
+      try {
+        await signUp({
+          variables: { email: email.value, password: password.value },
+        });
+        navigation.navigate('Login');
+      } catch (err) {
+        setEmail({ ...email, error: err.message });
+        return;
+      }
+    },
+    [navigation]
+  );
 
   return (
     <Background>
@@ -45,15 +54,6 @@ const Register = ({ navigation }: Props) => {
       <Logo />
 
       <Header>Create Account</Header>
-
-      <TextInput
-        label="Name"
-        returnKeyType="next"
-        value={name.value}
-        onChangeText={(text) => setName({ value: text, error: '' })}
-        error={!!name.error}
-        errorText={name.error}
-      />
 
       <TextInput
         label="Email"
@@ -78,7 +78,11 @@ const Register = ({ navigation }: Props) => {
         secureTextEntry
       />
 
-      <Button mode="contained" onPress={_onSignUpPressed} style={styles.button}>
+      <Button
+        mode="contained"
+        onPress={() => _onSignUpPressed(email, password)}
+        style={styles.button}
+      >
         Sign Up
       </Button>
 

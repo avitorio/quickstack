@@ -1,20 +1,19 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { ActivityIndicator, View } from 'react-native';
+import AuthRoutes from './auth.routes';
+import AppRoutes from './app.routes';
+import { useAuth } from '../hooks/auth';
 
-import { HomeScreen, ForgotPasswordScreen, Dashboard } from '../screens';
+const Routes: React.FC = () => {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#999" />
+      </View>
+    );
+  }
+  return user ? <AppRoutes /> : <AuthRoutes />;
+};
 
-import Home from '../screens/Home';
-import Login from '../screens/Login';
-import Register from '../screens/Register';
-
-const Auth = createStackNavigator();
-
-const AuthRoutes: React.FC = () => (
-  <Auth.Navigator headerMode="none">
-    <Auth.Screen name="Home" component={Home} />
-    <Auth.Screen name="Login" component={Login} />
-    <Auth.Screen name="Register" component={Register} />
-  </Auth.Navigator>
-);
-
-export default AuthRoutes;
+export default Routes;
