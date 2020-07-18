@@ -35,18 +35,25 @@ const Login: React.FC = () => {
           email: email.value,
           password: password.value,
         });
-      } catch (err) {
-        if (err.message.includes('email')) {
-          setEmail({ ...email, error: err.message });
+      } catch ({ message }) {
+        if (message.includes('email')) {
+          setEmail({ ...email, error: message });
+          setPassword({ ...password, error: '' });
           return;
         }
 
-        if (err.message.includes('password')) {
-          setPassword({ ...password, error: err.message });
+        if (message.includes('password')) {
+          setPassword({ ...password, error: message });
+          setEmail({ ...email, error: '' });
           return;
         }
 
-        setEmail({ ...email, error: err.message });
+        setEmail({
+          ...email,
+          error: message
+            ? message
+            : 'Something went wrong, please try again later.',
+        });
       }
     },
     [handleSignIn]
@@ -71,6 +78,7 @@ const Login: React.FC = () => {
         autoCompleteType="email"
         textContentType="emailAddress"
         keyboardType="email-address"
+        accessibilityStates
       />
 
       <TextInput
@@ -81,6 +89,7 @@ const Login: React.FC = () => {
         error={!!password.error}
         errorText={password.error}
         secureTextEntry
+        accessibilityStates
       />
 
       <View style={styles.forgotPassword}>
@@ -91,7 +100,11 @@ const Login: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <Button mode="contained" onPress={() => _onLoginPressed(email, password)}>
+      <Button
+        accessibilityStates
+        mode="contained"
+        onPress={() => _onLoginPressed(email, password)}
+      >
         Login
       </Button>
 
