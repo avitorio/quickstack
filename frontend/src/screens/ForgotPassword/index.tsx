@@ -1,5 +1,8 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useContext } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useMutation, gql } from '@apollo/client';
+import { useNavigation } from '@react-navigation/native';
+
 import { emailValidator } from '../../core/utils';
 import Background from '../../components/Background';
 import BackButton from '../../components/BackButton';
@@ -8,9 +11,7 @@ import Header from '../../components/Header';
 import TextInput from '../../components/TextInput';
 import { theme } from '../../core/theme';
 import Button from '../../components/Button';
-import { Navigation } from '../../types';
-import { useMutation, gql } from '@apollo/client';
-import { useNavigation } from '@react-navigation/native';
+import { AlertContext } from '../../context';
 
 const FORGOT_PASSWORD_EMAIL = gql`
   mutation PasswordRecoveryEmail($email: String!) {
@@ -19,12 +20,26 @@ const FORGOT_PASSWORD_EMAIL = gql`
 `;
 
 const ForgotPasswordScreen: React.FC = () => {
+  const { dispatchAlert } = useContext(AlertContext);
   const navigation = useNavigation();
   const [email, setEmail] = useState({ value: '', error: '' });
 
   const passwordRecoveryResponse = () => ({
     onCompleted: async (data: Object) => {
-      console.log(data);
+      dispatchAlert({
+        type: 'open',
+        alertType: 'success',
+        message: 'Recovery instructions have been sent to your email.',
+      });
+
+      navigation.navigate('Login');
+    },
+    onError: async (error) => {
+      dispatchAlert({
+        type: 'open',
+        alertType: 'error',
+        message: error.message,
+      });
     },
   });
 
@@ -45,7 +60,6 @@ const ForgotPasswordScreen: React.FC = () => {
       await passwordRecoveryEmail({
         variables: { email: email.value },
       });
-      navigation.navigate('Login');
     } catch (err) {
       setEmail({ ...email, error: err.message });
       return;
@@ -55,7 +69,6 @@ const ForgotPasswordScreen: React.FC = () => {
   return (
     <Background>
       <BackButton goBack={() => navigation.navigate('LoginScreen')} />
-
       <Logo />
 
       <Header>Restore Password</Header>
