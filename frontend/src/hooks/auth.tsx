@@ -46,8 +46,8 @@ const AuthProvider: React.FC = ({ children }) => {
       const { token, user } = data.signIn;
 
       await AsyncStorage.multiSet([
-        ['@Gobarber:token', token],
-        ['@Gobarber:user', JSON.stringify(user)],
+        ['@Quickstack:token', token],
+        ['@Quickstack:user', JSON.stringify(user)],
       ]);
 
       setAuthData({ token, user });
@@ -64,8 +64,8 @@ const AuthProvider: React.FC = ({ children }) => {
   useEffect(() => {
     async function loadStoredData(): Promise<void> {
       const [token, user] = await AsyncStorage.multiGet([
-        '@Gobarber:token',
-        '@Gobarber:user',
+        '@Quickstack:token',
+        '@Quickstack:user',
       ]);
       if (token[1] && user[1]) {
         setAuthData({ token: token[1], user: JSON.parse(user[1]) });
@@ -76,7 +76,7 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const handleSignIn = useCallback(async ({ email, password }) => {
-    await AsyncStorage.multiRemove(['@Gobarber:token', '@Gobarber:user']);
+    await AsyncStorage.multiRemove(['@Quickstack:token', '@Quickstack:user']);
 
     setAuthData({} as AuthState);
 
@@ -86,7 +86,7 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signOut = useCallback(async () => {
-    await AsyncStorage.multiRemove(['@Gobarber:token', '@Gobarber:user']);
+    await AsyncStorage.multiRemove(['@Quickstack:token', '@Quickstack:user']);
 
     setAuthData({} as AuthState);
   }, []);
