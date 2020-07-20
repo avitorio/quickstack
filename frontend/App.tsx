@@ -5,6 +5,8 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import App from './src/App';
 import { theme } from './src/core/theme';
 
+import ContextProvider from './src/context/state';
+
 const Main = () => {
   const client = new ApolloClient({
     uri: 'http://localhost:3000/graphql',
@@ -13,17 +15,19 @@ const Main = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <ApolloProvider client={client}>
-        {Platform.OS === 'web' ? (
-          <style type="text/css">{`
+      <ContextProvider>
+        <ApolloProvider client={client}>
+          {Platform.OS === 'web' ? (
+            <style type="text/css">{`
         @font-face {
           font-family: 'MaterialCommunityIcons';
           src: url(${require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')}) format('truetype');
         }
       `}</style>
-        ) : null}
-        <App />
-      </ApolloProvider>
+          ) : null}
+          <App />
+        </ApolloProvider>
+      </ContextProvider>
     </PaperProvider>
   );
 };
