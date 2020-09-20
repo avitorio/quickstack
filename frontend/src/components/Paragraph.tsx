@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import { theme } from '../core/theme';
+import { theme } from '../styles/themes/default';
 
 type Props = {
   children: React.ReactNode;

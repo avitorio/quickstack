@@ -6,7 +6,7 @@ import BackButton from '../components/BackButton';
 import Logo from '../components/Logo';
 import Header from '../components/Header';
 import TextInput from '../components/TextInput';
-import { theme } from '../core/theme';
+import { theme } from '../styles/themes/default';
 import Button from '../components/Button';
 import { Navigation } from '../types';
 
@@ -40,7 +40,7 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
         label="E-mail address"
         returnKeyType="done"
         value={email.value}
-        onChangeText={text => setEmail({ value: text, error: '' })}
+        onChangeText={(text) => setEmail({ value: text, error: '' })}
         error={!!email.error}
         errorText={email.error}
         autoCapitalize="none"

@@ -9,7 +9,7 @@ import BackButton from '../../components/BackButton';
 import Logo from '../../components/Logo';
 import Header from '../../components/Header';
 import TextInput from '../../components/TextInput';
-import { theme } from '../../core/theme';
+import { theme } from '../../styles/themes/default';
 import Button from '../../components/Button';
 import { AlertContext } from '../../context';
 
@@ -34,7 +34,7 @@ const ForgotPasswordScreen: React.FC = () => {
 
       navigation.navigate('Login');
     },
-    onError: async (error) => {
+    onError: async (error: Error) => {
       dispatchAlert({
         type: 'open',
         alertType: 'error',
@@ -68,7 +68,7 @@ const ForgotPasswordScreen: React.FC = () => {
 
   return (
     <Background>
-      <BackButton goBack={() => navigation.navigate('LoginScreen')} />
+      <BackButton goBack={() => navigation.navigate('Login')} />
       <Logo />
 
       <Header>Restore Password</Header>

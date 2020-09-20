@@ -9,7 +9,7 @@ import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 import BackButton from '../../components/BackButton';
 
-import { theme } from '../../core/theme';
+import { theme } from '../../styles/themes/default';
 import { emailValidator, passwordValidator } from '../../core/utils';
 import { useAuth } from '../../hooks/auth';
 
@@ -36,13 +36,13 @@ const Login: React.FC = () => {
           password: password.value,
         });
       } catch ({ message }) {
-        if (message.includes('email')) {
+        if (message.toLowerCase().includes('email')) {
           setEmail({ ...email, error: message });
           setPassword({ ...password, error: '' });
           return;
         }
 
-        if (message.includes('password')) {
+        if (message.toLowerCase().includes('password')) {
           setPassword({ ...password, error: message });
           setEmail({ ...email, error: '' });
           return;
@@ -108,7 +108,7 @@ const Login: React.FC = () => {
 
       <View style={styles.row}>
         <Text style={styles.label}>Don’t have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Register')}>
           <Text style={styles.link}>Sign up</Text>
         </TouchableOpacity>
       </View>
