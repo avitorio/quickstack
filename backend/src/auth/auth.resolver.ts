@@ -1,4 +1,4 @@
-import { Resolver, Args, Query } from '@nestjs/graphql';
+import { Resolver, Args, Mutation } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { ValidationPipe } from '@nestjs/common';
 import { AuthCredentialsInput } from './dto/auth-credentials.input';
@@ -8,8 +8,8 @@ import { SessionType } from './session.type';
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @Query(returns => SessionType)
-  singIn(
+  @Mutation(returns => SessionType)
+  signIn(
     @Args('authCredentialsInput', ValidationPipe)
     authCredentialsInput: AuthCredentialsInput,
   ): Promise<SessionType> {

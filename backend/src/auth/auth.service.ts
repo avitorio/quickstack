@@ -19,7 +19,7 @@ export class AuthService {
   constructor(
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
-    
+
     @Inject(JwtService)
     private jwtService: JwtService,
 
@@ -40,7 +40,7 @@ export class AuthService {
     ) {
       const payload: JwtPayload = { email };
       const accessToken = await this.jwtService.sign(payload);
-      return { accessToken };
+      return { token: accessToken, user: { id: user.id, email } };
     } else {
       throw new UnauthorizedException('Invalid credentials');
     }
