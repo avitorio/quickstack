@@ -13,12 +13,11 @@ const Auth = createStackNavigator();
 
 const AuthRoutes: React.FC = () => (
   <Auth.Navigator headerMode="none">
-    <Auth.Screen name="ResetPassword" component={ResetPassword} />
-    <Auth.Screen name="Home" component={Home} />
+    <Auth.Screen key="Home" name="Home" component={Home} />
     <Auth.Screen name="Login" component={Login} />
     <Auth.Screen name="Register" component={Register} />
     <Auth.Screen name="ForgotPassword" component={ForgotPassword} />
-    {/* <Auth.Screen name="ResetPassword" component={ResetPassword} /> */}
+    <Auth.Screen name="ResetPassword" component={ResetPassword} />
   </Auth.Navigator>
 );
 

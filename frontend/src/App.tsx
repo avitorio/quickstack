@@ -1,18 +1,18 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 
+import NavigationContainer from './routes/navigationContainer';
 import Routes from './routes';
 import AppProvider from './hooks';
 import SnackBar from './components/Snackbar';
 
 const App: React.FC = () => (
-  <NavigationContainer>
-    <AppProvider>
+  <AppProvider>
+    <NavigationContainer>
       <Routes />
       <SnackBar />
-    </AppProvider>
-  </NavigationContainer>
+    </NavigationContainer>
+  </AppProvider>
 );
 
 export default App;
