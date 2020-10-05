@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: quickstack_db
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    container_name: quickstack_backend
+    build: .
+    ports:
+      - '3000:3000'
+    command: yarn start:dev
+    environment:
+      - DB_HOST=quickstack_db
+    volumes:
+      - '.:/usr/app'
+
+volumes:
+  postgres_data:

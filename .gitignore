@@ -36,6 +36,9 @@ lerna-debug.log*
 # Config
 /config/*.yml
 
+# Environment
+.env
+
 # Expo
 node_modules/**/*
 .expo/*

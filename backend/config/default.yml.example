@@ -4,7 +4,7 @@ server:
 db:
   type: 'postgres'
   port: '5432'
-  database: 'nestjs'
+  database: 'quickstack'
 
 jwt:
   expiresIn: 3600
