@@ -19,6 +19,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "scheme": "quickstack"
   }
 }
