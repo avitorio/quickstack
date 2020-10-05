@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './task.entity';
 import { TaskStatus } from './task-status.enum';
 import { User } from '../users/user.entity';
-import { CreateTaskInput } from './task.Input';
+import { CreateTaskInput } from './task.input';
 
 @Injectable()
 export class TasksService {
