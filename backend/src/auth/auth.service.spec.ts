@@ -31,9 +31,12 @@ describe('AuthService', () => {
           },
         }),
       ],
-      providers: [UsersService, UserRepository, 
-      AuthService,
-      {provide: 'HashProvider', useClass: BCryptHashProvider}],
+      providers: [
+        UsersService,
+        UserRepository,
+        AuthService,
+        { provide: 'HashProvider', useClass: BCryptHashProvider },
+      ],
     }).compile();
 
     userRepository = await module.get<UserRepository>(UserRepository);
@@ -55,28 +58,27 @@ describe('AuthService', () => {
     it('returns Jwt token as validation is successful', async () => {
       userRepository.findOne.mockResolvedValue(user);
 
-      const {accessToken} = await authService.signIn(mockCredentialsDto);
-    
-      const tokenParts = accessToken.split('.');
+      const { token } = await authService.signIn(mockCredentialsDto);
+
+      const tokenParts = token.split('.');
 
       expect(tokenParts.length).toBe(3);
-
     });
 
     it('throws UnauthorizedException error as user is not found', async () => {
       userRepository.findOne.mockResolvedValue(undefined);
 
-      await expect(authService.signIn({email: 'this@test.com', password: '123123'})).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(
+        authService.signIn({ email: 'this@test.com', password: '123123' }),
+      ).rejects.toThrow(UnauthorizedException);
     });
 
     it('throws UnauthorizedException error as validation is unsuccessful', async () => {
       userRepository.findOne.mockResolvedValue(user);
 
-      await expect(authService.signIn({email: 'this@test.com', password: '123123'})).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(
+        authService.signIn({ email: 'this@test.com', password: '123123' }),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 });
