@@ -9,8 +9,8 @@ const App = createStackNavigator();
 const AppRoute: React.FC = () => {
   return (
     <App.Navigator headerMode="none">
-      <App.Screen name="Profile" component={Profile} />
       <App.Screen name="Dashboard" component={Dashboard} />
+      <App.Screen name="Profile" component={Profile} />
     </App.Navigator>
   );
 };

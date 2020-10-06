@@ -2,8 +2,9 @@ import React, { memo, useState, useContext } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useMutation, gql, ApolloError } from '@apollo/client';
 import { useNavigation } from '@react-navigation/native';
+import { validate as uuidValidate } from 'uuid';
 
-import { uuidValidator, passwordValidator } from '../../core/utils';
+import { passwordValidator } from '../../core/utils';
 import Background from '../../components/Background';
 import BackButton from '../../components/BackButton';
 import Logo from '../../components/Logo';
@@ -20,11 +21,14 @@ const RESET_PASSWORD = gql`
   }
 `;
 
-const ResetPassword: React.FC = () => {
+type AppProps = { route: { params: { token: string } } };
+
+const ResetPassword = ({ route: { params } }: AppProps) => {
   const { dispatchAlert } = useContext(AlertContext);
   const navigation = useNavigation();
+  console.log(params);
   const [token, setToken] = useState({
-    value: '08e6c21b-b7a4-4f8c-9ec5-4a2485519b66',
+    value: params.token,
     error: '',
   });
   const [password, setPassword] = useState({ value: '', error: '' });
@@ -61,7 +65,7 @@ const ResetPassword: React.FC = () => {
   const [resetPassword] = useMutation(RESET_PASSWORD, resetPasswordResponse());
 
   const handleResetPassword = async () => {
-    const tokenError = uuidValidator(token.value);
+    const tokenError = uuidValidate(token.value) ? false : 'Invalid token.';
 
     if (tokenError) {
       setToken({ ...token, error: tokenError });
@@ -120,6 +124,7 @@ const ResetPassword: React.FC = () => {
         mode="contained"
         onPress={handleResetPassword}
         style={styles.button}
+        accessibilityStates
       >
         Reset Password
       </Button>

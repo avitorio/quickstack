@@ -4,6 +4,9 @@ import { UserRepository } from '../user.repository';
 import { UserTokensRepository } from './user-tokens.repository';
 import { MailerService } from '@nestjs-modules/mailer';
 import { resolve } from 'path';
+import * as config from 'config';
+
+const app = config.get('app');
 
 interface IRequest {
   email: string;
@@ -21,7 +24,7 @@ export class PasswordRecoveryEmailService {
     private userTokensRepository: UserTokensRepository,
 
     @Inject(MailerService)
-    private readonly mailerService: MailerService
+    private readonly mailerService: MailerService,
   ) {}
 
   async execute({ email }: IRequest): Promise<void> {
@@ -33,21 +36,23 @@ export class PasswordRecoveryEmailService {
 
     const { token } = await this.userTokensRepository.generate(user.id);
 
-    await this
-      .mailerService
+    await this.mailerService
       .sendMail({
         to: email,
         subject: 'Your password recovery request',
         template: resolve(__dirname, 'views', 'password-recovery-email.hbs'),
-        context: { 
-          token
+        context: {
+          token,
+          appUrl: `${app.frontend}/reset-password`,
         },
       })
       .then(() => {
         this.logger.log(`Password recovery email sent to ${email}`);
       })
-      .catch((err) => {
-        this.logger.error(`Password recovery email not sent to ${email} with error: ${err}`);
+      .catch(err => {
+        this.logger.error(
+          `Password recovery email not sent to ${email} with error: ${err}`,
+        );
       });
   }
 }

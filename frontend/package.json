@@ -13,6 +13,7 @@
     "@react-native-community/masked-view": "0.1.10",
     "@react-navigation/native": "^5.7.0",
     "@react-navigation/stack": "^5.7.0",
+    "@types/uuid": "^8.3.0",
     "expo": "~38.0.8",
     "expo-status-bar": "^1.0.2",
     "graphql": "^15.3.0",
@@ -27,7 +28,8 @@
     "react-native-status-bar-height": "^2.5.0",
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.4.0",
-    "react-navigation-stack": "^2.8.2"
+    "react-navigation-stack": "^2.8.2",
+    "uuid": "^8.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",

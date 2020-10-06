@@ -20,9 +20,6 @@ export class UpdateUserInput {
   @IsString()
   @MinLength(8)
   @MaxLength(20)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'Old Password is Too Weak',
-  })
   @Field()
   old_password: string;
 
@@ -30,9 +27,6 @@ export class UpdateUserInput {
   @IsString()
   @MinLength(8)
   @MaxLength(20)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'Password too weak',
-  })
   @Field()
   password: string;
 }
