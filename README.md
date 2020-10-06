@@ -1,16 +1,11 @@
-# QuickStack - NestJS + Expo Boilerplate for Fast Web and Mobile App Development.
-
-<p align="center">
-  <img src="https://i.imgur.com/Py3TqjM.png" alt="QuickStack Logo" width="100">
-</p>
-
-<p align="center">
-  QuickStack is an open-source boilerplate created with NestJS and Expo. 
+<p align="center">  
+  <img src="https://i.imgur.com/iPDIEHm.png" alt="QuickStack" />
+  <br />
+  QuickStack - NestJS + Expo Boilerplate for Fast Web and Mobile App Development.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/PRs-welcome-%233a1ae7.svg" alt="PRs welcome!" />
-
   <img alt="License" src="https://img.shields.io/badge/license-MIT-%233a1ae7">
 
   <a href="https://twitter.com/intent/follow?screen_name=andrevitorio">
