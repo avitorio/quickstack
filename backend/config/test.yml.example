@@ -1,0 +1,17 @@
+app:
+  frontend: 'http://localhost:19006'
+  
+db:
+  host: 'localhost'
+  username: 'postgres'
+  password: 'docker'
+  synchronize: true
+
+jwt:
+  secret: 'topSecret41'
+
+mail:
+  host: 'smtp.ethereal.email'
+  port: 587
+  user: config.ethereal.username
+  pass: config.ethereal.password
