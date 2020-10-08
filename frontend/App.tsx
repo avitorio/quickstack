@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, StatusBar } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import App from './src/App';
@@ -15,6 +15,9 @@ const Main = () => {
 
   return (
     <PaperProvider theme={theme}>
+      {Platform.OS === 'ios' && (
+        <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
+      )}
       <ContextProvider>
         <ApolloProvider client={client}>
           {Platform.OS === 'web' ? (
