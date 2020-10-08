@@ -23,12 +23,12 @@ const RESET_PASSWORD = gql`
 
 type AppProps = { route: { params: { token: string } } };
 
-const ResetPassword = ({ route: { params } }: AppProps) => {
+const ResetPassword = ({ route }: AppProps) => {
   const { dispatchAlert } = useContext(AlertContext);
   const navigation = useNavigation();
-  console.log(params);
+
   const [token, setToken] = useState({
-    value: params.token,
+    value: route?.params?.token ? route.params.token : false,
     error: '',
   });
   const [password, setPassword] = useState({ value: '', error: '' });

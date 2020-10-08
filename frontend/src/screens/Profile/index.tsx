@@ -92,8 +92,6 @@ const Profile: React.FC = () => {
 
   return (
     <Background>
-      <BackButton goBack={() => navigation.navigate('Home')} />
-
       <Header>Profile</Header>
 
       <TextInput
