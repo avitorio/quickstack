@@ -1,10 +1,17 @@
-import { Injectable, Logger, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  Inject,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { UserRepository } from '../users/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { UserInputError } from 'apollo-server-express';
 import { CreateUserInput } from './dto/create-user.input';
 import IHashProvider from '../shared/providers/hash/models/hash-provider.interface';
 import { UpdateUserInput } from './dto/update-user.input';
@@ -66,7 +73,13 @@ export class UsersService {
     );
 
     if (!oldPasswordMatches) {
-      throw new Error('Old password is incorrect.');
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          message: 'Old password is incorrect.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     user.email = email;
