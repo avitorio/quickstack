@@ -6,7 +6,6 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
 import { GetUser } from './get-user.decorator';
 import { GqlAuthGuard } from '../auth/gql-auth-guard';
-import { UserType } from './user.type';
 
 const AuthGuard = new GqlAuthGuard();
 
@@ -23,13 +22,13 @@ export class UsersResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Mutation(returns => UserType)
+  @Mutation(returns => Boolean)
   updateUser(
     @Args('updateUserInput', ValidationPipe)
     updateUserInput: UpdateUserInput,
     @GetUser()
     user: User,
-  ): Promise<User> {
+  ): Promise<boolean> {
     return this.usersService.updateUser(updateUserInput, user);
   }
 }

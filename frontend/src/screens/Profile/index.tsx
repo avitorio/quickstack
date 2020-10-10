@@ -1,21 +1,20 @@
-import React, { memo, useState, useCallback } from 'react';
-import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { gql, useMutation } from '@apollo/client';
+import React, { memo, useState, useContext } from 'react';
+import { StyleSheet } from 'react-native';
+import { ApolloError, gql, useMutation } from '@apollo/client';
 
 import Background from '../../components/Background';
-import Logo from '../../components/Logo';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
-import BackButton from '../../components/BackButton';
 
 import { theme } from '../../styles/themes/default';
 import { emailValidator, passwordValidator } from '../../core/utils';
 import { useAuth } from '../../hooks/auth';
+import { AlertContext } from '../../context';
+import errorParser from '../../utils/errorParser';
 
 const UPDATE_USER = gql`
-  mutation UpdateUser(
+  mutation updateUser(
     $email: String!
     $old_password: String!
     $password: String!
@@ -26,16 +25,13 @@ const UPDATE_USER = gql`
         old_password: $old_password
         password: $password
       }
-    ) {
-      email
-    }
+    )
   }
 `;
 
 const Profile: React.FC = () => {
+  const { dispatchAlert } = useContext(AlertContext);
   const { user } = useAuth();
-  const [updateUser] = useMutation(UPDATE_USER);
-  const navigation = useNavigation();
   const [email, setEmail] = useState({ value: user.email, error: '' });
   const [oldPassword, setOldPassword] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
@@ -43,6 +39,40 @@ const Profile: React.FC = () => {
     value: '',
     error: '',
   });
+
+  const updateUserResponse = () => ({
+    onCompleted: async (data: Object) => {
+      dispatchAlert({
+        type: 'open',
+        alertType: 'success',
+        message: 'Your information has been updated!',
+      });
+    },
+    onError: async (error: ApolloError) => {
+      const errors = errorParser(error);
+
+      const errorMessage =
+        errors.length > 0 ? errors[0].message[0] : 'Something went wrong.';
+
+      if (errorMessage.toLowerCase().includes('old')) {
+        setOldPassword({ ...oldPassword, error: errorMessage });
+        return;
+      }
+
+      if (errorMessage.toLowerCase().includes('password')) {
+        setPassword({ ...password, error: errorMessage });
+        return;
+      }
+
+      dispatchAlert({
+        type: 'open',
+        alertType: 'error',
+        message: errorMessage,
+      });
+    },
+  });
+
+  const [updateUser] = useMutation(UPDATE_USER, updateUserResponse());
 
   const handleUpdateProfile = async () => {
     const emailError = emailValidator(email.value);

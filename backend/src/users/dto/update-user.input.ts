@@ -2,7 +2,6 @@ import {
   IsString,
   MinLength,
   MaxLength,
-  Matches,
   IsEmail,
   IsOptional,
 } from 'class-validator';
@@ -18,14 +17,16 @@ export class UpdateUserInput {
 
   @IsOptional()
   @IsString()
-  @MinLength(8)
+  @MinLength(6, {
+    message: 'Old password is too short.',
+  })
   @MaxLength(20)
   @Field()
   old_password: string;
 
   @IsOptional()
   @IsString()
-  @MinLength(8)
+  @MinLength(6)
   @MaxLength(20)
   @Field()
   password: string;

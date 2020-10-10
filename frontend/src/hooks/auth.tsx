@@ -18,7 +18,7 @@ interface SignInCredentials {
   password: string;
 }
 interface AuthContextData {
-  user: object;
+  user: { id: string; email: string };
   loading: boolean;
   handleSignIn(credentials: SignInCredentials): Promise<void | string>;
   signOut(): void;

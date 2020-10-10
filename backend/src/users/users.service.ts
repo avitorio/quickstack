@@ -45,7 +45,7 @@ export class UsersService {
   async updateUser(
     updateUserInput: UpdateUserInput,
     user: User,
-  ): Promise<User> {
+  ): Promise<boolean> {
     const { email, old_password, password } = updateUserInput;
 
     if (email !== user.email) {
@@ -74,6 +74,6 @@ export class UsersService {
 
     await this.userRepository.save(user);
 
-    return user;
+    return true;
   }
 }
