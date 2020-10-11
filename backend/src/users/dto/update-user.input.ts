@@ -15,19 +15,21 @@ export class UpdateUserInput {
   @Field()
   email: string;
 
+  @Field({ nullable: true })
+  @IsOptional()
   @IsOptional()
   @IsString()
   @MinLength(6, {
     message: 'Old password is too short.',
   })
   @MaxLength(20)
-  @Field()
-  old_password: string;
+  old_password?: string;
 
+  @Field({ nullable: true })
   @IsOptional()
   @IsString()
   @MinLength(6)
   @MaxLength(20)
   @Field()
-  password: string;
+  password?: string;
 }

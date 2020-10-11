@@ -96,6 +96,26 @@ describe('UserRepository', () => {
         true,
       );
     });
+    it('should update user email if old_password and password are empty', async () => {
+      jest.spyOn(usersService, 'updateUser');
+
+      userRepository.findByEmail = jest.fn().mockResolvedValue(false);
+      userRepository.save = jest.fn().mockResolvedValue(true);
+      jest.spyOn(hashProvider, 'generateHash');
+
+      expect(usersService.updateUser).not.toHaveBeenCalled();
+
+      await usersService.updateUser(
+        {
+          email: 'andre@vitorio.net',
+        },
+        mockUser,
+      );
+
+      expect(usersService.updateUser).toHaveBeenCalled();
+
+      expect(hashProvider.generateHash).not.toHaveBeenCalled();
+    });
 
     it('should not update user if email already exists', async () => {
       jest.spyOn(usersService, 'updateUser');

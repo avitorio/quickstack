@@ -63,27 +63,30 @@ export class UsersService {
       }
     }
 
-    if (password && !old_password) {
-      throw new Error('Old password required to set a new password.');
-    }
+    if (password && old_password) {
+      if (password && !old_password) {
+        throw new Error('Old password required to set a new password.');
+      }
 
-    const oldPasswordMatches = await this.hashProvider.compareHash(
-      old_password,
-      user.password,
-    );
-
-    if (!oldPasswordMatches) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: 'Old password is incorrect.',
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+      const oldPasswordMatches = await this.hashProvider.compareHash(
+        old_password,
+        user.password,
       );
+
+      if (!oldPasswordMatches) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            message: 'Old password is incorrect.',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
+
+      user.password = await this.hashProvider.generateHash(password);
     }
 
     user.email = email;
-    user.password = await this.hashProvider.generateHash(password);
 
     await this.userRepository.save(user);
 
