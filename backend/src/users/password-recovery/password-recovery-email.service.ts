@@ -1,4 +1,10 @@
-import { Logger, Injectable, Inject } from '@nestjs/common';
+import {
+  Logger,
+  Injectable,
+  Inject,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from '../user.repository';
 import { UserTokensRepository } from './user-tokens.repository';
@@ -31,7 +37,13 @@ export class PasswordRecoveryEmailService {
     const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
-      throw new Error('User does not exist');
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          message: 'User does not exist.',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     }
 
     const { token } = await this.userTokensRepository.generate(user.id);

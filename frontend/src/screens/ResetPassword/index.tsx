@@ -79,7 +79,7 @@ const ResetPassword = ({ route }: AppProps) => {
       dispatchAlert({
         type: 'open',
         alertType: 'error',
-        message: 'Something went wrong.',
+        message,
       });
     }
   };
