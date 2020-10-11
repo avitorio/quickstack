@@ -13,7 +13,6 @@ import TextInput from '../../components/TextInput';
 import { theme } from '../../styles/themes/default';
 import Button from '../../components/Button';
 import { AlertContext } from '../../context';
-import errorParser from '../../utils/errorParser';
 
 const RESET_PASSWORD = gql`
   mutation ResetPassword($token: String!, $password: String!) {
@@ -28,7 +27,7 @@ const ResetPassword = ({ route }: AppProps) => {
   const navigation = useNavigation();
 
   const [token, setToken] = useState({
-    value: route?.params?.token ? route.params.token : false,
+    value: route?.params?.token && route.params.token,
     error: '',
   });
   const [password, setPassword] = useState({ value: '', error: '' });
@@ -43,36 +42,19 @@ const ResetPassword = ({ route }: AppProps) => {
 
       navigation.navigate('Login');
     },
-    onError: async (error: ApolloError) => {
-      const errors = errorParser(error);
-
-      const errorMessage =
-        errors.length > 0 ? errors[0].message[0] : 'Something went wrong.';
-
-      if (errorMessage.toLowerCase().includes('password')) {
-        setPassword({ ...password, error: errorMessage });
-        return;
-      }
-
-      dispatchAlert({
-        type: 'open',
-        alertType: 'error',
-        message: 'Something went wrong.',
-      });
-    },
   });
 
   const [resetPassword] = useMutation(RESET_PASSWORD, resetPasswordResponse());
 
   const handleResetPassword = async () => {
-    const tokenError = uuidValidate(token.value) ? false : 'Invalid token.';
+    const isValidToken = uuidValidate(token.value);
 
-    if (tokenError) {
-      setToken({ ...token, error: tokenError });
+    if (!isValidToken) {
+      setToken({ ...token, error: 'Invalid token.' });
       dispatchAlert({
         type: 'open',
         alertType: 'error',
-        message: tokenError,
+        message: 'Invalid token.',
       });
       return;
     }

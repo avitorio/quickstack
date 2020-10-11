@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from 'react';
+import React, { memo, useState, useCallback, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { gql, useMutation } from '@apollo/client';
@@ -10,6 +10,7 @@ import TextInput from '../../components/TextInput';
 import BackButton from '../../components/BackButton';
 import { theme } from '../../styles/themes/default';
 import { emailValidator, passwordValidator } from '../../core/utils';
+import { AlertContext } from '../../context';
 
 const SIGN_UP = gql`
   mutation SignUp($email: String!, $password: String!) {
@@ -18,6 +19,7 @@ const SIGN_UP = gql`
 `;
 
 const Register: React.FC = () => {
+  const { dispatchAlert } = useContext(AlertContext);
   const navigation = useNavigation();
   const [signUp] = useMutation(SIGN_UP);
   const [email, setEmail] = useState({ value: '', error: '' });
@@ -40,7 +42,27 @@ const Register: React.FC = () => {
         });
         navigation.navigate('Login');
       } catch (err) {
-        setEmail({ ...email, error: err.message });
+        const { message } = err;
+        if (message.toLowerCase().includes('email')) {
+          setEmail({ ...email, error: message });
+          setPassword({ ...password, error: '' });
+          return;
+        }
+
+        if (message.toLowerCase().includes('password')) {
+          setPassword({ ...password, error: message });
+          setEmail({ ...email, error: '' });
+          return;
+        }
+
+        dispatchAlert({
+          type: 'open',
+          alertType: 'error',
+          message: message
+            ? message
+            : 'Something went wrong, please try again later.',
+        });
+
         return;
       }
     },
@@ -88,7 +110,7 @@ const Register: React.FC = () => {
 
       <View style={styles.row}>
         <Text style={styles.label}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.link}>Login</Text>
         </TouchableOpacity>
       </View>

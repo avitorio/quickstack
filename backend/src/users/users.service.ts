@@ -76,7 +76,7 @@ export class UsersService {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
-          message: 'Old password is incorrect.',
+          message: ['Old password is incorrect.'],
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );

@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from 'react';
+import React, { memo, useState, useCallback, useContext } from 'react';
 import { TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -12,9 +12,11 @@ import BackButton from '../../components/BackButton';
 import { theme } from '../../styles/themes/default';
 import { emailValidator, passwordValidator } from '../../core/utils';
 import { useAuth } from '../../hooks/auth';
+import { AlertContext } from '../../context';
 
 const Login: React.FC = () => {
   const navigation = useNavigation();
+  const { dispatchAlert } = useContext(AlertContext);
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const { handleSignIn } = useAuth();
@@ -48,12 +50,15 @@ const Login: React.FC = () => {
           return;
         }
 
-        setEmail({
-          ...email,
-          error: message
+        dispatchAlert({
+          type: 'open',
+          alertType: 'error',
+          message: message
             ? message
             : 'Something went wrong, please try again later.',
         });
+
+        return;
       }
     },
     [handleSignIn]

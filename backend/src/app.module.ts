@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailerConfig } from './config/mailer.config';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import beautifyError from './utils/beautifyError';
 
 @Module({
   imports: [
@@ -17,9 +18,13 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
       context: ({ req }) => ({ req }),
       debug: false,
       formatError: (error: GraphQLError) => {
-        console.log(error.extensions.exception.response);
+        const message = error.extensions.exception.response.message;
+
+        // Check if error message comes as a string or an array
         const graphQLFormattedError: GraphQLFormattedError = {
-          message: error.extensions.exception.response.message || error.message,
+          message: beautifyError(
+            typeof message === 'string' ? message : message[0] || error.message,
+          ),
         };
 
         return graphQLFormattedError;

@@ -10,7 +10,7 @@ export class CreateUserInput {
   email: string;
 
   @IsString()
-  @MinLength(6)
+  @MinLength(6, { message: 'Password must be at least 6 characters long.' })
   @MaxLength(20)
   @Field()
   password: string;
