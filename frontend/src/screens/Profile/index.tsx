@@ -1,6 +1,6 @@
-import React, { memo, useState, useContext } from 'react';
+import React, { memo, useState, useContext, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-import { ApolloError, gql, useMutation } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 
 import Background from '../../components/Background';
 import Header from '../../components/Header';
@@ -12,11 +12,17 @@ import { emailValidator, passwordValidator } from '../../core/utils';
 import { useAuth } from '../../hooks/auth';
 import { AlertContext } from '../../context';
 
+interface VariablesType {
+  email: string;
+  old_password?: string;
+  password?: string;
+}
+
 const UPDATE_USER = gql`
   mutation updateUser(
     $email: String!
-    $old_password: String!
-    $password: String!
+    $old_password: String
+    $password: String
   ) {
     updateUser(
       updateUserInput: {
@@ -30,7 +36,7 @@ const UPDATE_USER = gql`
 
 const Profile: React.FC = () => {
   const { dispatchAlert } = useContext(AlertContext);
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [email, setEmail] = useState({ value: user.email, error: '' });
   const [oldPassword, setOldPassword] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
@@ -39,6 +45,8 @@ const Profile: React.FC = () => {
     error: '',
   });
 
+  const [disableUpdate, setDisableUpdate] = useState(true);
+
   const updateUserResponse = () => ({
     onCompleted: async (data: Object) => {
       dispatchAlert({
@@ -46,6 +54,8 @@ const Profile: React.FC = () => {
         alertType: 'success',
         message: 'Your information has been updated!',
       });
+
+      signOut();
     },
   });
 
@@ -67,13 +77,16 @@ const Profile: React.FC = () => {
       return;
     }
 
+    const variables: VariablesType = { email: email.value };
+
+    if (oldPassword.value && password.value) {
+      variables.old_password = oldPassword.value;
+      variables.password = password.value;
+    }
+
     try {
       await updateUser({
-        variables: {
-          email: email.value,
-          old_password: oldPassword.value,
-          password: password.value,
-        },
+        variables,
       });
     } catch ({ message }) {
       if (message.toLowerCase().includes('email')) {
@@ -103,6 +116,25 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleEnableButton = (text?: string) => {
+    const passwords = document.querySelectorAll<HTMLInputElement>(
+      'input[type=password]'
+    );
+    let passwordSum = 0;
+
+    // If only some of the password fields are empty disable the button
+    Array.from(passwords).some((password) => {
+      passwordSum += password.value.length;
+      setDisableUpdate(password.value.length === 0);
+      return password.value.length === 0;
+    });
+
+    // Enable button if all password fields are empty but email was changed
+    if (passwordSum === 0) {
+      setDisableUpdate(text === user.email);
+    }
+  };
+
   return (
     <Background>
       <Header>Profile</Header>
@@ -111,7 +143,10 @@ const Profile: React.FC = () => {
         label="Email"
         returnKeyType="next"
         value={email.value}
-        onChangeText={(text) => setEmail({ value: text, error: '' })}
+        onChangeText={(text) => {
+          setEmail({ value: text, error: '' });
+          handleEnableButton(text);
+        }}
         error={!!email.error}
         errorText={email.error}
         autoCapitalize="none"
@@ -125,7 +160,10 @@ const Profile: React.FC = () => {
         label="Old Password"
         returnKeyType="done"
         value={oldPassword.value}
-        onChangeText={(text) => setOldPassword({ value: text, error: '' })}
+        onChangeText={(text) => {
+          setOldPassword({ value: text, error: '' });
+          handleEnableButton();
+        }}
         error={!!oldPassword.error}
         errorText={oldPassword.error}
         secureTextEntry
@@ -136,7 +174,10 @@ const Profile: React.FC = () => {
         label="New Password"
         returnKeyType="done"
         value={password.value}
-        onChangeText={(text) => setPassword({ value: text, error: '' })}
+        onChangeText={(text) => {
+          setPassword({ value: text, error: '' });
+          handleEnableButton();
+        }}
         error={!!password.error}
         errorText={password.error}
         secureTextEntry
@@ -147,7 +188,10 @@ const Profile: React.FC = () => {
         label="Confirm Password"
         returnKeyType="done"
         value={confirmPassword.value}
-        onChangeText={(text) => setConfirmPassword({ value: text, error: '' })}
+        onChangeText={(text) => {
+          setConfirmPassword({ value: text, error: '' });
+          handleEnableButton();
+        }}
         error={!!confirmPassword.error}
         errorText={confirmPassword.error}
         secureTextEntry
@@ -155,6 +199,7 @@ const Profile: React.FC = () => {
       />
 
       <Button
+        disabled={disableUpdate}
         accessibilityStates
         mode="contained"
         onPress={handleUpdateProfile}
