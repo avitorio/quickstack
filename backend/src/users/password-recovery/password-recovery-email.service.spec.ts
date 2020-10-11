@@ -50,7 +50,6 @@ describe('PasswordRecoveryEmail', () => {
     userTokensRepository = await module.get<UserTokensRepository>(
       UserTokensRepository,
     );
-    
   });
 
   it('should be able to recover the password by email', async () => {
@@ -78,7 +77,7 @@ describe('PasswordRecoveryEmail', () => {
       await passwordRecoveryEmailService.execute({
         email: 'jonasdoe@example.com',
       });
-    }).rejects.toEqual(new Error('User does not exist'));
+    }).rejects.toEqual(new Error('User does not exist.'));
   });
 
   it('should generate a forgot password token', async () => {

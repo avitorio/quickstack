@@ -58,6 +58,7 @@ describe('ResetPasswordService', () => {
     });
 
     userRepository.save = jest.fn();
+    userTokensRepository.delete = jest.fn();
 
     jest.spyOn(userTokensRepository, 'generate');
 
@@ -88,7 +89,7 @@ describe('ResetPasswordService', () => {
         token: 'non-existing',
         password: '123456',
       }),
-    ).rejects.toThrowError('User token does not exist');
+    ).rejects.toThrowError("Token doesn't exist or is invalid.");
   });
 
   it('should not be able to reset the password with non-existing user', async () => {
@@ -108,6 +109,8 @@ describe('ResetPasswordService', () => {
       email: 'johndoe@example.com',
       password: '123123',
     });
+
+    userTokensRepository.delete = jest.fn();
 
     const { token } = await userTokensRepository.generate(
       'johndoe@example.com',

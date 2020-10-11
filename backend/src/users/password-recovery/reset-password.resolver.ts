@@ -11,9 +11,7 @@ export class ResetPasswordResolver {
   resetPassword(
     @Args('resetPasswordInput', ValidationPipe)
     resetPasswordInput: ResetPasswordInput,
-  ): boolean {
-    this.resetPasswordService.execute(resetPasswordInput);
-
-    return true;
+  ): Promise<boolean> {
+    return this.resetPasswordService.execute(resetPasswordInput);
   }
 }
