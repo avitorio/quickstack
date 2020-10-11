@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { gql, useMutation } from '@apollo/client';
-import errorParser from '../utils/errorParser';
 
 interface AuthState {
   token: string;
@@ -51,13 +50,6 @@ const AuthProvider: React.FC = ({ children }) => {
       ]);
 
       setAuthData({ token, user });
-    },
-    onError: (error) => {
-      const errors = errorParser(error);
-
-      if (errors) {
-        throw new Error(errors[0].message);
-      }
     },
   });
 

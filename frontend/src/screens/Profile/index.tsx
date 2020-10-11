@@ -11,7 +11,6 @@ import { theme } from '../../styles/themes/default';
 import { emailValidator, passwordValidator } from '../../core/utils';
 import { useAuth } from '../../hooks/auth';
 import { AlertContext } from '../../context';
-import errorParser from '../../utils/errorParser';
 
 const UPDATE_USER = gql`
   mutation updateUser(
@@ -46,28 +45,6 @@ const Profile: React.FC = () => {
         type: 'open',
         alertType: 'success',
         message: 'Your information has been updated!',
-      });
-    },
-    onError: async (error: ApolloError) => {
-      const errors = errorParser(error);
-
-      const errorMessage =
-        errors.length > 0 ? errors[0].message[0] : 'Something went wrong.';
-
-      if (errorMessage.toLowerCase().includes('old')) {
-        setOldPassword({ ...oldPassword, error: errorMessage });
-        return;
-      }
-
-      if (errorMessage.toLowerCase().includes('password')) {
-        setPassword({ ...password, error: errorMessage });
-        return;
-      }
-
-      dispatchAlert({
-        type: 'open',
-        alertType: 'error',
-        message: errorMessage,
       });
     },
   });
@@ -105,15 +82,21 @@ const Profile: React.FC = () => {
         return;
       }
 
+      if (message.toLowerCase().includes('old')) {
+        setOldPassword({ ...oldPassword, error: message });
+        return;
+      }
+
       if (message.toLowerCase().includes('password')) {
         setPassword({ ...password, error: message });
         setEmail({ ...email, error: '' });
         return;
       }
 
-      setEmail({
-        ...email,
-        error: message
+      dispatchAlert({
+        type: 'open',
+        alertType: 'error',
+        message: message
           ? message
           : 'Something went wrong, please try again later.',
       });

@@ -47,9 +47,8 @@ const SnackBar: React.FC = () => {
           visible={alertState.open}
           onDismiss={() => closeMe()}
           action={{
-            label: 'Undo',
+            label: '',
             onPress: () => {
-              console.log('Snackbar closed');
               // Do something
             },
           }}

@@ -14,7 +14,6 @@ export class PasswordRecoveryEmailResolver {
     @Args('passwordRecoveryEmailInput', ValidationPipe)
     passwordRecoveryEmailInput: PasswordRecoveryEmailInput,
   ): boolean {
-    console.log(passwordRecoveryEmailInput);
     this.passwordRecoveryEmailService.execute(passwordRecoveryEmailInput);
 
     return true;
