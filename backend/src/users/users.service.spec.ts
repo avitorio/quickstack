@@ -79,7 +79,7 @@ describe('UserRepository', () => {
 
       expect(usersService.updateUser).not.toHaveBeenCalled();
 
-      const user = await usersService.updateUser(
+      await usersService.updateUser(
         {
           email: 'andre@vitorio.net',
           old_password: '123123',
@@ -92,7 +92,7 @@ describe('UserRepository', () => {
 
       expect(hashProvider.generateHash).toHaveBeenCalled();
 
-      expect(await hashProvider.compareHash(user.password, '123456')).toBe(
+      expect(await hashProvider.compareHash(mockUser.password, '123456')).toBe(
         true,
       );
     });
@@ -130,7 +130,7 @@ describe('UserRepository', () => {
           {
             email: 'andre@vitorio.net',
             old_password: '123123',
-            password: '123456',
+            password: '123123',
           },
           mockUser,
         ),
