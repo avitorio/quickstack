@@ -38,6 +38,7 @@
 ## ⚡️ Getting started
 
 ### Backend
+
 Clone the repository and in your terminal cd into /backend.
 
 Using Yarn:
@@ -52,7 +53,7 @@ Using NPM:
 npm install
 ```
 
-Make duplicates of the .example files in the /config directory and remove the .example extension.
+Make duplicates of the .example files in the root and /config directories and remove the .example extension.
 Edit them with your credentials.
 
 If you'd like to load the backend with Docker, run:
@@ -88,7 +89,9 @@ Using NPM:
 ```sh
 npm install
 ```
+
 Once the installation is done, run:
+
 ```sh
 expo start
 ```
