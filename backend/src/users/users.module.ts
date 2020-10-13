@@ -25,5 +25,6 @@ import { ResetPasswordService } from './password-recovery/reset-password.service
     PasswordRecoveryEmailResolver,
     PasswordRecoveryEmailService,
   ],
+  exports: [UsersService],
 })
 export class UsersModule {}

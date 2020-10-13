@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { Task } from '../tasks/task.entity';
+import { UserRole } from './user.type';
 
 @Entity('users')
 @Unique(['email'])
@@ -17,6 +18,9 @@ export class User extends BaseEntity {
 
   @Column()
   email: string;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.MEMBER })
+  role: UserRole;
 
   @Column()
   password: string;

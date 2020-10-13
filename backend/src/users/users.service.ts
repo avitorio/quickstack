@@ -11,11 +11,13 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { UserInputError } from 'apollo-server-express';
 import { CreateUserInput } from './dto/create-user.input';
 import IHashProvider from '../shared/providers/hash/models/hash-provider.interface';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
+import { Observable, from } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { UserRole, UserType } from './user.type';
 
 @Injectable()
 export class UsersService {
@@ -30,12 +32,15 @@ export class UsersService {
   ) {}
 
   async signUp(createUserInput: CreateUserInput): Promise<boolean> {
+    const firstUser = await this.userRepository.findOne();
+
     const { email, password } = createUserInput;
 
     const user = await this.userRepository.create();
 
     user.email = email;
     user.password = await this.hashProvider.generateHash(password);
+    user.role = firstUser ? UserRole.MEMBER : UserRole.ADMIN;
 
     try {
       await user.save();
@@ -91,5 +96,19 @@ export class UsersService {
     await this.userRepository.save(user);
 
     return true;
+  }
+
+  async getUsers(): Promise<User[]> {
+    const users = await this.userRepository.getUsers();
+    return users;
+  }
+
+  findOne(id: string): Observable<UserType> {
+    return from(this.userRepository.findOne({ id })).pipe(
+      map((user: UserType) => {
+        const { ...result } = user;
+        return result;
+      }),
+    );
   }
 }

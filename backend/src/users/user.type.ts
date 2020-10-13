@@ -7,4 +7,12 @@ export class UserType {
 
   @Field()
   email: string;
+
+  @Field()
+  role: UserRole;
+}
+
+export enum UserRole {
+  ADMIN = 'admin',
+  MEMBER = 'member',
 }
