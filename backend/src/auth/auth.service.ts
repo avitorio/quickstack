@@ -42,7 +42,7 @@ export class AuthService {
       const accessToken = await this.jwtService.sign(payload);
       return {
         token: accessToken,
-        user: { id: user.id, email, role: user.role },
+        user: { id: user.id, email },
       };
     } else {
       throw new UnauthorizedException('Invalid credentials');

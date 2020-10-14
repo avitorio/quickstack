@@ -10,7 +10,10 @@ import { gql, useMutation } from '@apollo/client';
 
 interface AuthState {
   token: string;
-  user: object;
+  user: {
+    id: string;
+    email: string;
+  };
 }
 interface SignInCredentials {
   email: string;
