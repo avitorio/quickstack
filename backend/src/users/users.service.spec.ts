@@ -16,6 +16,7 @@ const mockCredentialsDto = {
 };
 
 const mockUserRepository = () => ({
+  findOne: jest.fn(),
   findByEmail: jest.fn(),
   create: jest.fn(),
 });
