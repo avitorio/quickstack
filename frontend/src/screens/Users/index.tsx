@@ -32,7 +32,7 @@ const Users: React.FC = () => {
           </DataTable.Header>
 
           {data.getUsers.map(user => (
-            <DataTable.Row>
+            <DataTable.Row key={user.id}>
             <DataTable.Cell>{user.id}</DataTable.Cell>
             <DataTable.Cell >{user.email}</DataTable.Cell>
             </DataTable.Row>

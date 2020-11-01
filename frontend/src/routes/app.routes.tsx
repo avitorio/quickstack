@@ -16,10 +16,31 @@ import Profile from '../screens/Profile';
 import Logout from '../utils/components/Logout';
 
 const SCREENS = {
-  Dashboard: { title: 'Dashboard', component: Dashboard, icon: 'dashboard', requiredRoles: ['admin', 'member']  },
-  Users: { title: 'Users', component: Users, icon: 'people', requiredRoles: ['admin']  },
-  Profile: { title: 'Profile', component: Profile, icon: 'person', requiredRoles: ['admin', 'member']  },
-  Logout: { title: 'Logout', component: Logout, icon: 'power-settings-new', requiredRoles: ['admin', 'member']  },
+  Dashboard: {
+    title: 'Dashboard',
+    component: Dashboard,
+    icon: 'dashboard',
+    requiredRoles: ['admin',
+   'member']
+  },
+  Users: {
+    title: 'Users',
+    component: Users,
+    icon: 'people',
+    requiredRoles: ['admin']
+  },
+  Profile: {
+    title: 'Profile',
+    component: Profile,
+    icon: 'person',
+    requiredRoles: ['admin','member']
+  },
+  Logout: {
+    title: 'Logout',
+    component: Logout,
+    icon: 'power-settings-new',
+    requiredRoles: ['admin','member']
+  },
 };
 
 type RootDrawerParamList = {
@@ -49,7 +70,7 @@ const AppRoute: React.FC = (props) => {
   return (
     <Drawer.Navigator drawerType={isLargeScreen ? 'permanent' : undefined}>
       {(Object.keys(SCREENS) as Array<keyof typeof SCREENS>).map((name) => (
-        <>
+        <React.Fragment key={name}>
         {SCREENS[name].requiredRoles.includes(user.role) &&
         (<Drawer.Screen
           name={name}
@@ -81,7 +102,7 @@ const AppRoute: React.FC = (props) => {
             </App.Navigator>
           )}
         </Drawer.Screen>)}
-        </>
+        </React.Fragment >
       ))}
     </Drawer.Navigator>
   );
