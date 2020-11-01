@@ -8,7 +8,7 @@ import Button from '../../components/Button';
 import TextInput from '../../components/TextInput';
 
 import { theme } from '../../styles/themes/default';
-import { emailValidator, passwordValidator } from '../../core/utils';
+import { emailValidator } from '../../core/utils';
 import { useAuth } from '../../hooks/auth';
 import { AlertContext } from '../../context';
 

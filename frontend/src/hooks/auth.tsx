@@ -13,14 +13,17 @@ interface AuthState {
   user: {
     id: string;
     email: string;
+    role: string;
   };
 }
+
 interface SignInCredentials {
   email: string;
   password: string;
 }
+
 interface AuthContextData {
-  user: { id: string; email: string };
+  user: { id: string; email: string, role: string };
   loading: boolean;
   handleSignIn(credentials: SignInCredentials): Promise<void | string>;
   signOut(): void;
@@ -33,6 +36,7 @@ const SIGN_IN = gql`
       user {
         id
         email
+        role
       }
     }
   }
