@@ -1,9 +1,9 @@
 app:
   frontend: 'http://localhost:19006'
-  
+
 db:
-  host: 'localhost'
-  username: 'postgres'
+  host: 'quickstack_db'
+  username: 'docker'
   password: 'docker'
   synchronize: true
 
@@ -11,6 +11,7 @@ jwt:
   secret: 'topSecret41'
 
 mail:
+  from: 'backend@quickstack.com'
   host: 'smtp.ethereal.email'
   port: 587
   user: config.ethereal.username

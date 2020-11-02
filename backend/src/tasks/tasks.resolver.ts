@@ -11,7 +11,7 @@ import { CreateTaskInput } from './task.input';
 import { Task } from './task.entity';
 import { GetUser } from '../users/get-user.decorator';
 import { User } from '../users/user.entity';
-import { GqlAuthGuard } from '../auth/gql-auth-guard';
+import { GqlAuthGuard } from '../auth/guards/gql-auth-guard';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
 import { TaskStatus } from './task-status.enum';
