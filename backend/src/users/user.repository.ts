@@ -17,6 +17,8 @@ export class UserRepository extends Repository<User> {
     try {
       const users = this.find();
       return users;
-    } catch (error) {}
+    } catch (error) {
+      return [];
+    }
   }
 }

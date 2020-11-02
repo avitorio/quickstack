@@ -103,7 +103,6 @@ export class UsersService {
 
   async findOne(id: string): Promise<UserType> {
     const user = await this.userRepository.findOne({ id });
-
     return user;
   }
 }
