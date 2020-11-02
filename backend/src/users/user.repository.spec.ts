@@ -38,4 +38,30 @@ describe('UserRepository', () => {
       expect(result).toEqual(null);
     });
   });
+
+  describe('getUsers', () => {
+    let user;
+
+    beforeEach(() => {
+      userRepository.find = jest.fn();
+      user = new User();
+      user.email = 'test@email.com';
+    });
+
+    it('should return an array with all users', async () => {
+      userRepository.find.mockResolvedValue([user]);
+
+      const result = await userRepository.getUsers();
+
+      expect(result).toEqual([user]);
+    });
+
+    it('should return an empty array as there are no users', async () => {
+      userRepository.find.mockResolvedValue([]);
+
+      const result = await userRepository.getUsers();
+
+      expect(result).toEqual([]);
+    });
+  });
 });

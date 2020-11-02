@@ -54,6 +54,36 @@ describe('UserRepository', () => {
       expect(usersService.signUp(mockCredentialsDto)).resolves.not.toThrow();
     });
 
+    it('successfully signs up first user as an admin', async () => {
+      userRepository.findOne = jest.fn().mockResolvedValue(null);
+
+      save.mockResolvedValue(undefined);
+
+      mockUser.save = save;
+
+      userRepository.create.mockResolvedValue(mockUser);
+
+      await expect(
+        usersService.signUp(mockCredentialsDto),
+      ).resolves.not.toThrow();
+      expect(mockUser.role).toBe('admin');
+    });
+
+    it('successfully sign up subsequent user roles as member', async () => {
+      userRepository.findOne = jest.fn().mockResolvedValue(mockUser);
+
+      save.mockResolvedValue(undefined);
+
+      mockUser.save = save;
+
+      userRepository.create.mockResolvedValue(mockUser);
+
+      await expect(
+        usersService.signUp(mockCredentialsDto),
+      ).resolves.not.toThrow();
+      expect(mockUser.role).toBe('member');
+    });
+
     it('throws a conflict exception as email already exists', async () => {
       save.mockRejectedValue({ code: '23505' });
       await expect(usersService.signUp(mockCredentialsDto)).rejects.toThrow(
@@ -61,7 +91,7 @@ describe('UserRepository', () => {
       );
     });
 
-    it('throws a conflict exception as email alreadt exists', async () => {
+    it('throws internal server error if response differs from 23505', async () => {
       save.mockRejectedValue({ code: '123123' });
       await expect(usersService.signUp(mockCredentialsDto)).rejects.toThrow(
         InternalServerErrorException,
@@ -97,6 +127,7 @@ describe('UserRepository', () => {
         true,
       );
     });
+
     it('should update user email if old_password and password are empty', async () => {
       jest.spyOn(usersService, 'updateUser');
 
@@ -156,6 +187,24 @@ describe('UserRepository', () => {
           mockUser,
         ),
       ).rejects.toThrowError('Old password is incorrect.');
+    });
+  });
+
+  describe('getUsers', () => {
+    it('should list all users', async () => {
+      jest.spyOn(usersService, 'getUsers');
+
+      const user = new User();
+      const user2 = new User();
+
+      user.email = 'test@email.com';
+      user2.email = 'test2@email.com';
+
+      userRepository.getUsers = jest.fn().mockResolvedValue([user, user2]);
+
+      await usersService.getUsers();
+
+      expect(userRepository.getUsers).toHaveBeenCalled();
     });
   });
 });
