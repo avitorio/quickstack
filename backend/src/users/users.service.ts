@@ -15,8 +15,6 @@ import { CreateUserInput } from './dto/create-user.input';
 import IHashProvider from '../shared/providers/hash/models/hash-provider.interface';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
-import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { UserRole, UserType } from './user.type';
 
 @Injectable()
@@ -103,12 +101,9 @@ export class UsersService {
     return users;
   }
 
-  findOne(id: string): Observable<UserType> {
-    return from(this.userRepository.findOne({ id })).pipe(
-      map((user: UserType) => {
-        const { ...result } = user;
-        return result;
-      }),
-    );
+  async findOne(id: string): Promise<UserType> {
+    const user = await this.userRepository.findOne({ id });
+
+    return user;
   }
 }
