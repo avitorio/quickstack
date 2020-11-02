@@ -32,6 +32,7 @@
 - Docker;
 - Authentication;
 - User Registration;
+- User Roles;
 - Password Recovery;
 - Backend Tests;
 
@@ -95,6 +96,15 @@ Once the installation is done, run:
 ```sh
 expo start
 ```
+
+## 👩🏽‍💻 User Roles
+
+The boilerplate currently comes with two roles, Admins and Members.
+The role of Admin is assigned to the first user to register on the system.
+Subsequent users are registered as members.
+There's a role guard setup on the backend for GraphQL endpoints and on the frontend
+for routes. I'll be updating the Users list screen so that Admins can update users
+information from the Dashboard.
 
 ## ✨ Contributing
 
