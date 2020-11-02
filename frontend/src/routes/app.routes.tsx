@@ -20,33 +20,31 @@ const SCREENS = {
     title: 'Dashboard',
     component: Dashboard,
     icon: 'dashboard',
-    requiredRoles: ['admin',
-   'member']
+    requiredRoles: ['admin', 'member'],
   },
   Users: {
     title: 'Users',
     component: Users,
     icon: 'people',
-    requiredRoles: ['admin']
+    requiredRoles: ['admin'],
   },
   Profile: {
     title: 'Profile',
     component: Profile,
     icon: 'person',
-    requiredRoles: ['admin','member']
+    requiredRoles: ['admin', 'member'],
   },
   Logout: {
     title: 'Logout',
     component: Logout,
     icon: 'power-settings-new',
-    requiredRoles: ['admin','member']
+    requiredRoles: ['admin', 'member'],
   },
 };
 
 type RootDrawerParamList = {
   [P in keyof typeof SCREENS]: undefined;
 };
-
 
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
 const App = createStackNavigator();
@@ -71,38 +69,43 @@ const AppRoute: React.FC = (props) => {
     <Drawer.Navigator drawerType={isLargeScreen ? 'permanent' : undefined}>
       {(Object.keys(SCREENS) as Array<keyof typeof SCREENS>).map((name) => (
         <React.Fragment key={name}>
-        {SCREENS[name].requiredRoles.includes(user.role) &&
-        (<Drawer.Screen
-          name={name}
-          options={{
-            title: SCREENS[name].title,
-            drawerIcon: ({ size, color }) => (
-              <MaterialIcons size={size} color={color} name={SCREENS[name].icon} />
-            ),
-          }}
-        >
-          {({ navigation }: DrawerScreenProps<RootDrawerParamList>) => (
-            <App.Navigator>
-              <App.Screen
-                name='app'
-                component={SCREENS[name].component}
-                options={{
-                  title: SCREENS[name].title,
-                  headerLeft: isLargeScreen
-                    ? undefined
-                    : () => (
-                        <Appbar.Action
-                          icon="menu"
-                          onPress={() => navigation.toggleDrawer()}
-                          accessibilityStates
-                        />
-                      ),
-                }}
-              />
-            </App.Navigator>
+          {SCREENS[name].requiredRoles.includes(user.role) && (
+            <Drawer.Screen
+              name={name}
+              options={{
+                title: SCREENS[name].title,
+                drawerIcon: ({ size, color }) => (
+                  <MaterialIcons
+                    size={size}
+                    color={color}
+                    name={SCREENS[name].icon}
+                  />
+                ),
+              }}
+            >
+              {({ navigation }: DrawerScreenProps<RootDrawerParamList>) => (
+                <App.Navigator>
+                  <App.Screen
+                    name="app"
+                    component={SCREENS[name].component}
+                    options={{
+                      title: SCREENS[name].title,
+                      headerLeft: isLargeScreen
+                        ? undefined
+                        : () => (
+                            <Appbar.Action
+                              icon="menu"
+                              onPress={() => navigation.toggleDrawer()}
+                              accessibilityStates
+                            />
+                          ),
+                    }}
+                  />
+                </App.Navigator>
+              )}
+            </Drawer.Screen>
           )}
-        </Drawer.Screen>)}
-        </React.Fragment >
+        </React.Fragment>
       ))}
     </Drawer.Navigator>
   );

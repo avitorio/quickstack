@@ -18,9 +18,7 @@ export class RolesGuard implements CanActivate {
     private userService: UsersService,
   ) {}
 
-  async canActivate(
-    context: ExecutionContext,
-  ): Promise<boolean> {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
 
     if (!roles) {
@@ -29,7 +27,7 @@ export class RolesGuard implements CanActivate {
 
     const request = GqlExecutionContext.create(context);
 
-    const ctxUser : User = request.getContext().req.user;
+    const ctxUser: User = request.getContext().req.user;
 
     const user = await this.userService.findOne(ctxUser.id);
 
