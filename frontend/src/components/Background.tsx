@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import {
+  Platform,
   ImageBackground,
   StyleSheet,
   KeyboardAvoidingView,
@@ -30,10 +31,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     width: '100%',
-    maxWidth: 340,
+    maxWidth: Platform.OS === 'web' ? 'initial' : 340,
     alignSelf: 'center',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: Platform.OS === 'web' ? 'flex-start' : 'center',
   },
 });
 
