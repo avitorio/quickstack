@@ -21,7 +21,7 @@ const Users: React.FC = () => {
   const { loading, error, data } = useQuery(GET_USERS);
 
   return (
-    <Background>
+    <Background position="top" width="full">
       <Header>Users</Header>
       {loading && <Paragraph>Loading...</Paragraph>}
       {error && <Paragraph>{error.message}</Paragraph>}

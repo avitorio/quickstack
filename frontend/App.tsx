@@ -8,6 +8,8 @@ import {
   ApolloProvider,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import type {} from 'styled-components/cssprop';
+
 import App from './src/App';
 import { theme } from './src/core/theme';
 
