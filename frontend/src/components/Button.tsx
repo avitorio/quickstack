@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     maxWidth: 340,
+    minWidth: 340,
     marginVertical: 10,
   },
   text: {

@@ -6,7 +6,7 @@ export const Container = styled.ImageBackground`
 `;
 
 type WrapperProps = {
-  width?: string;
+  wrapperWidth?: string;
   position?: string;
   children: React.ReactNode;
 };
@@ -15,7 +15,8 @@ export const Wrapper = styled.KeyboardAvoidingView<WrapperProps>`
   flex: 1;
   padding: 20px;
   width: 100%;
-  max-width: ${({ width }) => (width === 'full' ? '100%' : '340px')};
+  max-width: ${({ wrapperWidth }) =>
+    wrapperWidth === 'full' ? '100%' : '340px'};
   align-self: center;
   align-items: center;
   justify-content: ${({ position }) =>

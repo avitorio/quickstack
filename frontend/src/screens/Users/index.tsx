@@ -1,11 +1,12 @@
 import React, { memo } from 'react';
 import { gql, useQuery } from '@apollo/client';
+import { Checkbox, IconButton } from 'react-native-paper';
+import { View, Platform } from 'react-native';
 
 import Header from '../../components/Header';
 import Paragraph from '../../components/Paragraph';
 import Table from '../../components/Table';
 import Background from '../../components/Background';
-import { Checkbox, IconButton } from 'react-native-paper';
 
 const GET_USERS = gql`
   query query {
@@ -21,21 +22,25 @@ const Users: React.FC = () => {
   const { loading, error, data } = useQuery(GET_USERS);
 
   return (
-    <Background position="top" width="full">
-      <Header>Users</Header>
+    <Background position="top" wrapperWidth="full">
+      {Platform.OS !== 'web' && <Header>Users</Header>}
       {loading && <Paragraph>Loading...</Paragraph>}
       {error && <Paragraph>{error.message}</Paragraph>}
       {data && (
         <Table>
           <Table.Header>
-            <Table.Title>
-              <Checkbox
-                status={checked ? 'checked' : 'unchecked'}
-                onPress={() => {
-                  setChecked(!checked);
-                }}
-              />
-            </Table.Title>
+            {Platform.OS === 'web' && (
+              <Table.Title>
+                <View>
+                  <Checkbox
+                    status={checked ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      setChecked(!checked);
+                    }}
+                  />
+                </View>
+              </Table.Title>
+            )}
             <Table.Title>Email</Table.Title>
             <Table.Title>Role</Table.Title>
             <Table.Title>Options</Table.Title>
@@ -43,14 +48,16 @@ const Users: React.FC = () => {
 
           {data.getUsers.map((user) => (
             <Table.Row key={user.email}>
-              <Table.Cell>
-                <Checkbox
-                  status={checked ? 'checked' : 'unchecked'}
-                  onPress={() => {
-                    setChecked(!checked);
-                  }}
-                />
-              </Table.Cell>
+              {Platform.OS === 'web' && (
+                <Table.Cell>
+                  <Checkbox
+                    status={checked ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      setChecked(!checked);
+                    }}
+                  />
+                </Table.Cell>
+              )}
               <Table.Cell>{user.email}</Table.Cell>
               <Table.Cell>{user.role}</Table.Cell>
               <Table.Cell>

@@ -3,17 +3,17 @@ import React, { memo } from 'react';
 import { Container, Wrapper } from './styles';
 
 type BackgroundProps = {
-  width?: string;
+  wrapperWidth?: string;
   position?: string;
   children: React.ReactNode;
 };
 
-const Background = ({ children, position, width }: BackgroundProps) => (
+const Background = ({ children, position, wrapperWidth }: BackgroundProps) => (
   <Container
     source={require('../../assets/background_dot.png')}
     resizeMode="repeat"
   >
-    <Wrapper behavior="padding" position={position} width={width}>
+    <Wrapper position={position} wrapperWidth={wrapperWidth} behavior="padding">
       {children}
     </Wrapper>
   </Container>
