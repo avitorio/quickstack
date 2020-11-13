@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { DataTable } from 'react-native-paper';
-import { theme } from '../styles/themes/default';
+import { theme } from '../../styles/themes/default';
 
 type Props = {
   children: React.ReactNode;

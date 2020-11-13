@@ -12,6 +12,7 @@ import { useAuth } from '../hooks/auth';
 
 import Dashboard from '../screens/Dashboard';
 import Users from '../screens/Users';
+import EditUser from '../screens/Users/EditUser';
 import Profile from '../screens/Profile';
 import Logout from '../utils/components/Logout';
 

@@ -15,6 +15,7 @@ export const Wrapper = styled.KeyboardAvoidingView<WrapperProps>`
   flex: 1;
   padding: 20px;
   width: 100%;
+  min-width: 340px;
   max-width: ${({ wrapperWidth }) =>
     wrapperWidth === 'full' ? '100%' : '340px'};
   align-self: center;

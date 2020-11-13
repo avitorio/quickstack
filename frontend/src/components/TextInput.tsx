@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     maxWidth: 340,
-    minWidth: 340,
     marginVertical: 12,
   },
   input: {
