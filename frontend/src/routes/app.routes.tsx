@@ -1,9 +1,11 @@
 import React from 'react';
-import { Dimensions, ScaledSize } from 'react-native';
+import { Dimensions, Linking, ScaledSize } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialIcons } from '@expo/vector-icons';
 import {
   createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItem,
   DrawerScreenProps,
 } from '@react-navigation/drawer';
 import { Appbar } from 'react-native-paper';
@@ -12,7 +14,6 @@ import { useAuth } from '../hooks/auth';
 
 import Dashboard from '../screens/Dashboard';
 import Users from '../screens/Users';
-import EditUser from '../screens/Users/EditUser';
 import Profile from '../screens/Profile';
 import Logout from '../utils/components/Logout';
 
@@ -87,7 +88,7 @@ const AppRoute: React.FC = (props) => {
               {({ navigation }: DrawerScreenProps<RootDrawerParamList>) => (
                 <App.Navigator>
                   <App.Screen
-                    name="app"
+                    name="."
                     component={SCREENS[name].component}
                     options={{
                       title: SCREENS[name].title,

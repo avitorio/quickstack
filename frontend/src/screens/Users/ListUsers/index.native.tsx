@@ -1,13 +1,11 @@
-import React, { memo, useContext } from 'react';
+import React, { memo } from 'react';
 import { gql, useQuery } from '@apollo/client';
-import { Checkbox, IconButton, List } from 'react-native-paper';
-import { View, Platform } from 'react-native';
+import { List } from 'react-native-paper';
 
-import Header from '../../components/Header';
-import Paragraph from '../../components/Paragraph';
-import Section from '../../components/List';
-import Background from '../../components/Background';
-import { AlertContext } from '../../context';
+import Paragraph from '../../../components/Paragraph';
+import Section from '../../../components/List';
+import Background from '../../../components/Background';
+import { useNavigation } from '@react-navigation/native';
 
 const GET_USERS = gql`
   query query {
@@ -19,12 +17,8 @@ const GET_USERS = gql`
 `;
 
 const Users: React.FC = () => {
-  const { dispatchAlert } = useContext(AlertContext);
-  const [checked, setChecked] = React.useState(false);
+  const navigation = useNavigation();
   const { loading, error, data } = useQuery(GET_USERS);
-  const [expanded, setExpanded] = React.useState(true);
-
-  const handlePress = () => setExpanded(!expanded);
 
   return (
     <Background position="top" wrapperWidth="full">
@@ -37,13 +31,7 @@ const Users: React.FC = () => {
               key={user.email}
               title={user.email}
               description={user.role}
-              onPress={() =>
-                dispatchAlert({
-                  type: 'open',
-                  alertType: 'success',
-                  message: 'Your information has been updated!',
-                })
-              }
+              onPress={() => navigation.navigate('EditUser')}
               style={{
                 backgroundColor: 'white',
                 borderBottomWidth: 1,

@@ -11,6 +11,7 @@ import { theme } from '../../../styles/themes/default';
 import { emailValidator } from '../../../core/utils';
 import { useAuth } from '../../../hooks/auth';
 import { AlertContext } from '../../../context';
+import { useNavigation } from '@react-navigation/native';
 
 interface VariablesType {
   email: string;
@@ -35,6 +36,7 @@ const UPDATE_USER = gql`
 `;
 
 const EditUser: React.FC = () => {
+  const navigation = useNavigation();
   const { dispatchAlert } = useContext(AlertContext);
   const { user, signOut } = useAuth();
   const [email, setEmail] = useState({ value: user.email, error: '' });
