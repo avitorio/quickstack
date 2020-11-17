@@ -27,17 +27,19 @@ const Users: React.FC = () => {
       {data && (
         <Section>
           {data.getUsers.map((user) => (
-            <List.Item
-              key={user.email}
-              title={user.email}
-              description={user.role}
-              onPress={() => navigation.navigate('EditUser')}
-              style={{
-                backgroundColor: 'white',
-                borderBottomWidth: 1,
-                borderBottomColor: 'gray',
-              }}
-            />
+            <React.Fragment key={user.email}>
+              <List.Item
+                title={user.email}
+                description={user.role}
+                onPress={() => navigation.navigate('EditUser')}
+                style={{
+                  backgroundColor: 'white',
+                  borderBottomWidth: 1,
+                  borderBottomColor: 'gray',
+                }}
+                left={(props) => <List.Icon {...props} icon="account-circle" />}
+              />
+            </React.Fragment>
           ))}
         </Section>
       )}
