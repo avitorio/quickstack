@@ -22,4 +22,5 @@ export const Wrapper = styled.KeyboardAvoidingView<WrapperProps>`
   align-items: center;
   justify-content: ${({ position }) =>
     position === 'top' ? 'flex-start' : 'center'};
+  margin-bottom: 60px;
 `;
