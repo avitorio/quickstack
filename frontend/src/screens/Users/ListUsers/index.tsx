@@ -1,16 +1,24 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { Checkbox, IconButton } from 'react-native-paper';
-import { View, Platform } from 'react-native';
+import { View } from 'react-native';
 
 import Paragraph from '../../../components/Paragraph';
 import Table from '../../../components/Table';
 import Background from '../../../components/Background';
 import { useNavigation } from '@react-navigation/native';
 
+interface UserType {
+  id: string;
+  email: string;
+  role: string;
+  checked: boolean;
+}
+
 const GET_USERS = gql`
   query query {
     getUsers {
+      id
       email
       role
     }
@@ -19,8 +27,48 @@ const GET_USERS = gql`
 
 const Users: React.FC = () => {
   const navigation = useNavigation();
-  const [checked, setChecked] = React.useState(false);
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [checkAll, setCheckAll] = useState(false);
   const { loading, error, data } = useQuery(GET_USERS);
+
+  useEffect(() => {
+    if (data) {
+      const users =
+        data &&
+        data.getUsers.map((user: UserType) => ({
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          checked: false,
+        }));
+      setUsers(users);
+    }
+  }, [data]);
+
+  const handleCheckOne = (user: UserType) => {
+    const newUsers = users.map((x: UserType) => {
+      if (x.id === user.id) {
+        return {
+          ...user,
+          checked: !user.checked,
+        };
+      } else {
+        return x;
+      }
+    });
+
+    setUsers(newUsers);
+  };
+
+  const handleCheckAll = () => {
+    const newUsers = users.map((user: UserType) => ({
+      ...user,
+      checked: !checkAll ? true : false,
+    }));
+
+    setUsers(newUsers);
+    setCheckAll(!checkAll);
+  };
 
   return (
     <Background position="top" wrapperWidth="full">
@@ -32,10 +80,8 @@ const Users: React.FC = () => {
             <Table.Title>
               <View style={{ position: 'absolute', marginTop: -6 }}>
                 <Checkbox
-                  status={checked ? 'checked' : 'unchecked'}
-                  onPress={() => {
-                    setChecked(!checked);
-                  }}
+                  status={checkAll ? 'checked' : 'unchecked'}
+                  onPress={handleCheckAll}
                 />
               </View>
             </Table.Title>
@@ -44,18 +90,14 @@ const Users: React.FC = () => {
             <Table.Title numeric>Options</Table.Title>
           </Table.Header>
 
-          {data.getUsers.map((user) => (
-            <Table.Row key={user.email}>
-              {Platform.OS === 'web' && (
-                <Table.Cell>
-                  <Checkbox
-                    status={checked ? 'checked' : 'unchecked'}
-                    onPress={() => {
-                      setChecked(!checked);
-                    }}
-                  />
-                </Table.Cell>
-              )}
+          {users.map((user: UserType) => (
+            <Table.Row key={user.id}>
+              <Table.Cell>
+                <Checkbox
+                  status={user.checked ? 'checked' : 'unchecked'}
+                  onPress={() => handleCheckOne(user)}
+                />
+              </Table.Cell>
               <Table.Cell>{user.email}</Table.Cell>
               <Table.Cell>{user.role}</Table.Cell>
               <Table.Cell numeric>
