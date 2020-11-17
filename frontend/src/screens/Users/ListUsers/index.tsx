@@ -29,21 +29,19 @@ const Users: React.FC = () => {
       {data && (
         <Table>
           <Table.Header>
-            {Platform.OS === 'web' && (
-              <Table.Title>
-                <View>
-                  <Checkbox
-                    status={checked ? 'checked' : 'unchecked'}
-                    onPress={() => {
-                      setChecked(!checked);
-                    }}
-                  />
-                </View>
-              </Table.Title>
-            )}
+            <Table.Title>
+              <View style={{ position: 'absolute', marginTop: -6 }}>
+                <Checkbox
+                  status={checked ? 'checked' : 'unchecked'}
+                  onPress={() => {
+                    setChecked(!checked);
+                  }}
+                />
+              </View>
+            </Table.Title>
             <Table.Title>Email</Table.Title>
             <Table.Title>Role</Table.Title>
-            <Table.Title>Options</Table.Title>
+            <Table.Title numeric>Options</Table.Title>
           </Table.Header>
 
           {data.getUsers.map((user) => (
@@ -60,7 +58,7 @@ const Users: React.FC = () => {
               )}
               <Table.Cell>{user.email}</Table.Cell>
               <Table.Cell>{user.role}</Table.Cell>
-              <Table.Cell>
+              <Table.Cell numeric>
                 <IconButton
                   icon="pencil"
                   size={20}

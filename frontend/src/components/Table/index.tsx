@@ -15,14 +15,16 @@ Table.Header = ({ children }: Props) => (
   <DataTable.Header style={styles.header}>{children}</DataTable.Header>
 );
 
-Table.Title = ({ children }: Props) => (
-  <DataTable.Title style={styles.title}>{children}</DataTable.Title>
+Table.Title = ({ children, numeric }: Props) => (
+  <DataTable.Title numeric={numeric} style={styles.title}>
+    {children}
+  </DataTable.Title>
 );
 
 Table.Row = ({ children }: Props) => <DataTable.Row>{children}</DataTable.Row>;
 
-Table.Cell = ({ children }: Props) => (
-  <DataTable.Cell>{children}</DataTable.Cell>
+Table.Cell = ({ children, numeric }: Props) => (
+  <DataTable.Cell numeric={numeric}>{children}</DataTable.Cell>
 );
 
 Table.Pagination = ({ children }: Props) => (
@@ -34,11 +36,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
-    height: 58,
+    height: 48,
   },
   title: {
     alignItems: 'center',
-    height: '100%',
+    height: 48,
+    cell: {
+      height: 36,
+    },
   },
   text: {
     fontSize: 16,
