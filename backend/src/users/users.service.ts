@@ -16,6 +16,7 @@ import IHashProvider from '../shared/providers/hash/models/hash-provider.interfa
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
 import { UserRole, UserType } from './user.type';
+import { GetUserInput } from './dto/get-user.input';
 
 @Injectable()
 export class UsersService {
@@ -66,11 +67,11 @@ export class UsersService {
       }
     }
 
-    if (password && old_password) {
-      if (password && !old_password) {
-        throw new Error('Old password required to set a new password.');
-      }
+    if (password && !old_password) {
+      throw new Error('Old password required to set a new password.');
+    }
 
+    if (password && old_password) {
       const oldPasswordMatches = await this.hashProvider.compareHash(
         old_password,
         user.password,
@@ -101,8 +102,8 @@ export class UsersService {
     return users;
   }
 
-  async findOne(id: string): Promise<UserType> {
-    const user = await this.userRepository.findOne({ id });
+  async getUser(getUserInput: GetUserInput): Promise<User> {
+    const user = await this.userRepository.findOne(getUserInput);
     return user;
   }
 }

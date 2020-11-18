@@ -188,6 +188,22 @@ describe('UserRepository', () => {
         ),
       ).rejects.toThrowError('Old password is incorrect.');
     });
+
+    it('should not update user if old password missing', async () => {
+      jest.spyOn(usersService, 'updateUser');
+
+      expect(usersService.updateUser).not.toHaveBeenCalled();
+
+      await expect(
+        usersService.updateUser(
+          {
+            email: 'andre@vitorio.net',
+            password: '123123',
+          },
+          mockUser,
+        ),
+      ).rejects.toThrowError('Old password required to set a new password.');
+    });
   });
 
   describe('getUsers', () => {
@@ -205,6 +221,23 @@ describe('UserRepository', () => {
       await usersService.getUsers();
 
       expect(userRepository.getUsers).toHaveBeenCalled();
+    });
+  });
+
+  describe('getUser', () => {
+    it('should get one user by id', async () => {
+      jest.spyOn(usersService, 'getUser');
+
+      const user = new User();
+
+      user.id = 'adononononono';
+      user.email = 'test@email.com';
+
+      userRepository.findOne = jest.fn().mockResolvedValue([user]);
+
+      await usersService.getUser({ id: user.id });
+
+      expect(userRepository.findOne).toHaveBeenCalled();
     });
   });
 });
