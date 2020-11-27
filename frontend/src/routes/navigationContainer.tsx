@@ -30,6 +30,12 @@ const config = {
     Profile: {
       path: 'profile',
     },
+    Users: {
+      path: 'users',
+    },
+    EditUser: {
+      path: 'edit-user',
+    },
     NotFound: '*',
   },
 };

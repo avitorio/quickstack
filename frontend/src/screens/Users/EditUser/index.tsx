@@ -1,31 +1,50 @@
 import React, { memo, useState, useContext, useEffect } from 'react';
-import { Keyboard, StyleSheet } from 'react-native';
-import { gql, useMutation } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
+import { useRoute, RouteProp } from '@react-navigation/native';
 
-import Background from '../../components/Background';
-import Header from '../../components/Header';
-import Button from '../../components/Button';
-import TextInput from '../../components/TextInput';
+import Background from '../../../components/Background';
+import Header from '../../../components/Header';
+import Button from '../../../components/Button';
+import TextInput from '../../../components/TextInput';
 
-import { theme } from '../../styles/themes/default';
-import { emailValidator } from '../../core/utils';
-import { useAuth } from '../../hooks/auth';
-import { AlertContext } from '../../context';
+import { emailValidator } from '../../../core/utils';
+import { AlertContext, UsersListContext } from '../../../context';
+import { Keyboard } from 'react-native';
+import IUser from '../../../context/usersList/user.interface';
 
 interface VariablesType {
+  id: string;
   email: string;
   old_password?: string;
   password?: string;
 }
 
+type SimpleStackParamList = {
+  EditUser: { userId: string };
+};
+
+type EditUserScreenRouteProp = RouteProp<SimpleStackParamList, 'EditUser'>;
+
+const GET_USER = gql`
+  query getUser($id: String!) {
+    getUser(getUserInput: { id: $id }) {
+      id
+      email
+      role
+    }
+  }
+`;
+
 const UPDATE_USER = gql`
   mutation updateUser(
+    $id: String!
     $email: String!
     $old_password: String
     $password: String
   ) {
     updateUser(
       updateUserInput: {
+        id: $id
         email: $email
         old_password: $old_password
         password: $password
@@ -34,30 +53,65 @@ const UPDATE_USER = gql`
   }
 `;
 
-const Profile: React.FC = () => {
+const EditUser: React.FC = () => {
+  const route = useRoute<EditUserScreenRouteProp>();
+  const { userId } = route.params;
   const { dispatchAlert } = useContext(AlertContext);
-  const { user, signOut } = useAuth();
+  const { users, setUsers } = useContext(UsersListContext);
+  const [user, setUser] = useState<IUser>({
+    email: '',
+    id: '',
+    role: 'member',
+  });
   const [email, setEmail] = useState({ value: user.email, error: '' });
-  const [oldPassword, setOldPassword] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const [confirmPassword, setConfirmPassword] = useState({
     value: '',
     error: '',
   });
 
+  const { data } = useQuery(GET_USER, {
+    variables: { id: userId },
+    fetchPolicy: 'no-cache',
+  });
+
   const [disableUpdate, setDisableUpdate] = useState(true);
+
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+      const userData = data && data.getUser;
+      setUser(userData);
+      setEmail({ value: userData.email, error: '' });
+      setUsers((users) => {
+        const updatedUsers = users.map((x) =>
+          x.id === userData.id ? { ...userData } : x
+        );
+        return updatedUsers;
+      });
+    }
+  }, [data]);
+
+  useEffect(() => {}, [user]);
 
   const updateUserResponse = () => ({
     onCompleted: async (data: Object) => {
       dispatchAlert({
         type: 'open',
         alertType: 'success',
-        message: 'Your information has been updated!',
+        message: 'The user has been updated!',
       });
 
-      signOut();
+      updateUsersList();
     },
   });
+
+  const updateUsersList = () => {
+    const updatedUsers = users.map((x) =>
+      x.id === user.id ? { ...user, email: email.value } : x
+    );
+    setUsers(updatedUsers);
+  };
 
   const [updateUser] = useMutation(UPDATE_USER, updateUserResponse());
 
@@ -77,11 +131,11 @@ const Profile: React.FC = () => {
       return;
     }
 
-    const variables: VariablesType = { email: email.value };
+    const variables: VariablesType = { id: user.id, email: email.value };
 
-    if (oldPassword.value && password.value) {
-      variables.old_password = oldPassword.value;
+    if (password.value) {
       variables.password = password.value;
+      variables.old_password = 'anything';
     }
 
     try {
@@ -92,11 +146,6 @@ const Profile: React.FC = () => {
       if (message.toLowerCase().includes('email')) {
         setEmail({ ...email, error: message });
         setPassword({ ...password, error: '' });
-        return;
-      }
-
-      if (message.toLowerCase().includes('old')) {
-        setOldPassword({ ...oldPassword, error: message });
         return;
       }
 
@@ -117,7 +166,7 @@ const Profile: React.FC = () => {
   };
 
   useEffect(() => {
-    const passwords = [password, oldPassword, confirmPassword];
+    const passwords = [password, confirmPassword];
     let passwordSum = 0;
 
     // If only some of the password fields are empty disable the button
@@ -126,19 +175,27 @@ const Profile: React.FC = () => {
       return password.value.length === 0;
     });
 
-    setDisableUpdate(passwordSum !== 3);
+    setDisableUpdate(passwordSum !== passwords.length);
 
     if (
       email.value !== user.email &&
-      (passwordSum === 0 || passwordSum === 3)
+      (passwordSum === 0 || passwordSum === passwords.length)
     ) {
       setDisableUpdate(false);
     }
-  }, [password, oldPassword, confirmPassword, email]);
+  }, [password, confirmPassword, email]);
 
   return (
     <Background>
       <Header>Profile</Header>
+
+      <TextInput
+        label="Id"
+        value={user.id}
+        disabled
+        returnKeyType="next"
+        accessibilityStates
+      />
 
       <TextInput
         label="Email"
@@ -154,22 +211,6 @@ const Profile: React.FC = () => {
         textContentType="emailAddress"
         keyboardType="email-address"
         accessibilityStates
-      />
-
-      <TextInput
-        label="Old Password"
-        returnKeyType="done"
-        value={oldPassword.value}
-        onChangeText={(text) => {
-          setOldPassword({ value: text, error: '' });
-        }}
-        error={!!oldPassword.error}
-        errorText={oldPassword.error}
-        secureTextEntry
-        accessibilityStates
-        blurOnSubmit={false}
-        onSubmitEditing={() => Keyboard.dismiss()}
-        textContentType={'oneTimeCode'}
       />
 
       <TextInput
@@ -216,23 +257,4 @@ const Profile: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  forgotPassword: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 24,
-  },
-  row: {
-    flexDirection: 'row',
-    marginTop: 4,
-  },
-  label: {
-    color: theme.colors.secondary,
-  },
-  link: {
-    fontWeight: 'bold',
-    color: theme.colors.primary,
-  },
-});
-
-export default memo(Profile);
+export default memo(EditUser);

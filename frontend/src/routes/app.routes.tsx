@@ -86,7 +86,7 @@ const AppRoute: React.FC = (props) => {
               {({ navigation }: DrawerScreenProps<RootDrawerParamList>) => (
                 <App.Navigator>
                   <App.Screen
-                    name="app"
+                    name="."
                     component={SCREENS[name].component}
                     options={{
                       title: SCREENS[name].title,

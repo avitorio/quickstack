@@ -16,8 +16,8 @@ const Dashboard: React.FC = () => {
       <Logo />
       <Header>Let’s start</Header>
       <Paragraph>
-        Your amazing app starts here. Open you favourite code editor and start
-        editing this project.
+        Your amazing app starts here.{"\n"}
+        Open you favourite code editor and start editing this project.
       </Paragraph>
       <Button mode="outlined" onPress={() => signOut()}>
         Logout

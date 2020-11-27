@@ -1,12 +1,14 @@
 import { Test } from '@nestjs/testing';
-import { UserRepository } from './user.repository';
 import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
+
+import { UserRepository } from './user.repository';
 import { UsersService } from './users.service';
 import { BCryptHashProvider } from '../shared/providers/hash/provider/bcrypt-hash.provider';
 import { User } from './user.entity';
+import { UserRole } from './user.type';
 
 const mockUser = new User();
 
@@ -112,7 +114,7 @@ describe('UserRepository', () => {
 
       await usersService.updateUser(
         {
-          email: 'andre@vitorio.net',
+          email: 'user@email.com',
           old_password: '123123',
           password: '123456',
         },
@@ -139,7 +141,7 @@ describe('UserRepository', () => {
 
       await usersService.updateUser(
         {
-          email: 'andre@vitorio.net',
+          email: 'user@email.com',
         },
         mockUser,
       );
@@ -180,13 +182,58 @@ describe('UserRepository', () => {
       await expect(
         usersService.updateUser(
           {
-            email: 'andre@vitorio.net',
+            email: 'user@email.com',
             old_password: '123123',
             password: '123123',
           },
           mockUser,
         ),
       ).rejects.toThrowError('Old password is incorrect.');
+    });
+
+    it('should not update user if old password missing', async () => {
+      jest.spyOn(usersService, 'updateUser');
+
+      expect(usersService.updateUser).not.toHaveBeenCalled();
+
+      await expect(
+        usersService.updateUser(
+          {
+            email: 'user@email.com',
+            password: '123123',
+          },
+          mockUser,
+        ),
+      ).rejects.toThrowError('Old password required to set a new password.');
+    });
+
+    it('should allow admin to update user email if password is empty', async () => {
+      jest.spyOn(usersService, 'updateUser');
+
+      mockUser.email = 'admin@email.com';
+      mockUser.role = UserRole.ADMIN;
+
+      userRepository.findOne = jest.fn().mockResolvedValue({
+        id: 'askdmasdmasdkmasd',
+        email: 'user@email.com',
+      });
+      userRepository.findByEmail = jest.fn().mockResolvedValue(false);
+      userRepository.save = jest.fn().mockResolvedValue(true);
+      jest.spyOn(hashProvider, 'generateHash');
+
+      expect(usersService.updateUser).not.toHaveBeenCalled();
+
+      await usersService.updateUser(
+        {
+          id: 'askdmasdmasdkmasd',
+          email: 'updated@email.com',
+        },
+        mockUser,
+      );
+
+      expect(usersService.updateUser).toHaveBeenCalled();
+
+      expect(hashProvider.generateHash).not.toHaveBeenCalled();
     });
   });
 
@@ -205,6 +252,23 @@ describe('UserRepository', () => {
       await usersService.getUsers();
 
       expect(userRepository.getUsers).toHaveBeenCalled();
+    });
+  });
+
+  describe('getUser', () => {
+    it('should get one user by id', async () => {
+      jest.spyOn(usersService, 'getUser');
+
+      const user = new User();
+
+      user.id = 'adononononono';
+      user.email = 'test@email.com';
+
+      userRepository.findOne = jest.fn().mockResolvedValue([user]);
+
+      await usersService.getUser({ id: user.id });
+
+      expect(userRepository.findOne).toHaveBeenCalled();
     });
   });
 });

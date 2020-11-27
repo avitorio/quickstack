@@ -9,6 +9,7 @@ import { GqlAuthGuard } from '../auth/guards/gql-auth-guard';
 import { UserRole, UserType } from './user.type';
 import { hasRoles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { GetUserInput } from './dto/get-user.input';
 
 const AuthGuard = new GqlAuthGuard();
 
@@ -40,5 +41,16 @@ export class UsersResolver {
   @Query(() => [UserType])
   getUsers(): Promise<User[]> {
     return this.usersService.getUsers();
+  }
+
+  @hasRoles(UserRole.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Query(() => UserType)
+  getUser(
+    @Args('getUserInput', ValidationPipe)
+    getUserInput: GetUserInput,
+  ): Promise<UserType> {
+    const user = this.usersService.getUser(getUserInput);
+    return user;
   }
 }
