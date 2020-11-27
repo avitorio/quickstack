@@ -1,5 +1,6 @@
 import React, { ReactNode, cloneElement } from 'react';
 import { AlertProvider } from './alert';
+import { UsersListProvider } from './usersList';
 
 interface IProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ function ProviderComposer({ contexts, children }: IProviderComposer) {
 
 function ContextProvider({ children }: IProps) {
   return (
-    <ProviderComposer contexts={[<AlertProvider />]}>
+    <ProviderComposer contexts={[<AlertProvider />, <UsersListProvider />]}>
       {children}
     </ProviderComposer>
   );

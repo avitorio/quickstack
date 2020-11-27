@@ -1,11 +1,9 @@
 import React from 'react';
-import { Dimensions, Linking, ScaledSize } from 'react-native';
+import { Dimensions, ScaledSize } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialIcons } from '@expo/vector-icons';
 import {
   createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItem,
   DrawerScreenProps,
 } from '@react-navigation/drawer';
 import { Appbar } from 'react-native-paper';

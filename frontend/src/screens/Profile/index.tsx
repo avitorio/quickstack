@@ -1,5 +1,5 @@
 import React, { memo, useState, useContext, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { Keyboard, StyleSheet } from 'react-native';
 import { gql, useMutation } from '@apollo/client';
 
 import Background from '../../components/Background';
@@ -116,24 +116,25 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleEnableButton = (text?: string) => {
-    const passwords = document.querySelectorAll<HTMLInputElement>(
-      'input[type=password]'
-    );
+  useEffect(() => {
+    const passwords = [password, oldPassword, confirmPassword];
     let passwordSum = 0;
 
     // If only some of the password fields are empty disable the button
-    Array.from(passwords).some((password) => {
-      passwordSum += password.value.length;
-      setDisableUpdate(password.value.length === 0);
+    passwords.forEach((password) => {
+      passwordSum += password.value.length !== 0 ? 1 : 0;
       return password.value.length === 0;
     });
 
-    // Enable button if all password fields are empty but email was changed
-    if (passwordSum === 0) {
-      setDisableUpdate(text === user.email);
+    setDisableUpdate(passwordSum !== 3);
+
+    if (
+      email.value !== user.email &&
+      (passwordSum === 0 || passwordSum === 3)
+    ) {
+      setDisableUpdate(false);
     }
-  };
+  }, [password, oldPassword, confirmPassword, email]);
 
   return (
     <Background>
@@ -145,7 +146,6 @@ const Profile: React.FC = () => {
         value={email.value}
         onChangeText={(text) => {
           setEmail({ value: text, error: '' });
-          handleEnableButton(text);
         }}
         error={!!email.error}
         errorText={email.error}
@@ -162,12 +162,14 @@ const Profile: React.FC = () => {
         value={oldPassword.value}
         onChangeText={(text) => {
           setOldPassword({ value: text, error: '' });
-          handleEnableButton();
         }}
         error={!!oldPassword.error}
         errorText={oldPassword.error}
         secureTextEntry
         accessibilityStates
+        blurOnSubmit={false}
+        onSubmitEditing={() => Keyboard.dismiss()}
+        textContentType={'oneTimeCode'}
       />
 
       <TextInput
@@ -176,12 +178,14 @@ const Profile: React.FC = () => {
         value={password.value}
         onChangeText={(text) => {
           setPassword({ value: text, error: '' });
-          handleEnableButton();
         }}
         error={!!password.error}
         errorText={password.error}
         secureTextEntry
         accessibilityStates
+        blurOnSubmit={false}
+        onSubmitEditing={() => Keyboard.dismiss()}
+        textContentType={'oneTimeCode'}
       />
 
       <TextInput
@@ -190,12 +194,14 @@ const Profile: React.FC = () => {
         value={confirmPassword.value}
         onChangeText={(text) => {
           setConfirmPassword({ value: text, error: '' });
-          handleEnableButton();
         }}
         error={!!confirmPassword.error}
         errorText={confirmPassword.error}
         secureTextEntry
         accessibilityStates
+        blurOnSubmit={false}
+        onSubmitEditing={() => Keyboard.dismiss()}
+        textContentType={'oneTimeCode'}
       />
 
       <Button

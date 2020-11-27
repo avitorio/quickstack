@@ -1,22 +1,18 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useContext, useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { Checkbox, IconButton } from 'react-native-paper';
 import { View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import Paragraph from '../../../components/Paragraph';
 import Table from '../../../components/Table';
 import Background from '../../../components/Background';
-import { useNavigation } from '@react-navigation/native';
 
-interface UserType {
-  id: string;
-  email: string;
-  role: string;
-  checked: boolean;
-}
+import { UsersListContext } from '../../../context';
+import IUser from '../../../context/usersList/user.interface';
 
 const GET_USERS = gql`
-  query query {
+  query {
     getUsers {
       id
       email
@@ -27,26 +23,26 @@ const GET_USERS = gql`
 
 const Users: React.FC = () => {
   const navigation = useNavigation();
-  const [users, setUsers] = useState<UserType[]>([]);
+  const { users, setUsers } = useContext(UsersListContext);
   const [checkAll, setCheckAll] = useState(false);
   const { loading, error, data } = useQuery(GET_USERS);
 
   useEffect(() => {
     if (data) {
-      const users =
+      const fetchedUsers =
         data &&
-        data.getUsers.map((user: UserType) => ({
+        data.getUsers.map((user: IUser) => ({
           id: user.id,
           email: user.email,
           role: user.role,
           checked: false,
         }));
-      setUsers(users);
+      setUsers(fetchedUsers);
     }
   }, [data]);
 
-  const handleCheckOne = (user: UserType) => {
-    const newUsers = users.map((x: UserType) => {
+  const handleCheckOne = (user: IUser) => {
+    const newUsers = users.map((x) => {
       if (x.id === user.id) {
         return {
           ...user,
@@ -61,7 +57,7 @@ const Users: React.FC = () => {
   };
 
   const handleCheckAll = () => {
-    const newUsers = users.map((user: UserType) => ({
+    const newUsers = users.map((user) => ({
       ...user,
       checked: !checkAll ? true : false,
     }));
@@ -74,7 +70,7 @@ const Users: React.FC = () => {
     <Background position="top" wrapperWidth="full">
       {loading && <Paragraph>Loading...</Paragraph>}
       {error && <Paragraph>{error.message}</Paragraph>}
-      {data && (
+      {users && (
         <Table>
           <Table.Header>
             <Table.Title>
@@ -90,7 +86,7 @@ const Users: React.FC = () => {
             <Table.Title numeric>Options</Table.Title>
           </Table.Header>
 
-          {users.map((user: UserType) => (
+          {users.map((user) => (
             <Table.Row key={user.id}>
               <Table.Cell>
                 <Checkbox
@@ -105,7 +101,9 @@ const Users: React.FC = () => {
                   icon="pencil"
                   size={20}
                   accessibilityStates
-                  onPress={() => navigation.navigate('EditUser')}
+                  onPress={() =>
+                    navigation.navigate('EditUser', { userId: user.id })
+                  }
                 />
               </Table.Cell>
             </Table.Row>

@@ -15,7 +15,7 @@ import { CreateUserInput } from './dto/create-user.input';
 import IHashProvider from '../shared/providers/hash/models/hash-provider.interface';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
-import { UserRole, UserType } from './user.type';
+import { UserRole } from './user.type';
 import { GetUserInput } from './dto/get-user.input';
 
 @Injectable()
@@ -57,7 +57,13 @@ export class UsersService {
     updateUserInput: UpdateUserInput,
     user: User,
   ): Promise<boolean> {
-    const { email, old_password, password } = updateUserInput;
+    const { id, email, old_password, password } = updateUserInput;
+
+    const isAdmin = user.role === UserRole.ADMIN;
+
+    if (isAdmin) {
+      user = await this.userRepository.findOne(id);
+    }
 
     if (email !== user.email) {
       const emailExists = await this.userRepository.findByEmail(email);
@@ -67,24 +73,26 @@ export class UsersService {
       }
     }
 
-    if (password && !old_password) {
+    if (password && !old_password && !isAdmin) {
       throw new Error('Old password required to set a new password.');
     }
 
-    if (password && old_password) {
-      const oldPasswordMatches = await this.hashProvider.compareHash(
-        old_password,
-        user.password,
-      );
-
-      if (!oldPasswordMatches) {
-        throw new HttpException(
-          {
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-            message: 'Old password is incorrect.',
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+    if (password && (old_password || isAdmin)) {
+      if (!isAdmin) {
+        const oldPasswordMatches = await this.hashProvider.compareHash(
+          old_password,
+          user.password,
         );
+
+        if (!oldPasswordMatches && !isAdmin) {
+          throw new HttpException(
+            {
+              status: HttpStatus.UNPROCESSABLE_ENTITY,
+              message: 'Old password is incorrect.',
+            },
+            HttpStatus.UNPROCESSABLE_ENTITY,
+          );
+        }
       }
 
       user.password = await this.hashProvider.generateHash(password);
@@ -97,13 +105,14 @@ export class UsersService {
     return true;
   }
 
+  async getUser(getUserInput: GetUserInput): Promise<User> {
+    const { id } = getUserInput;
+    const user = await this.userRepository.findOne(id);
+    return user;
+  }
+
   async getUsers(): Promise<User[]> {
     const users = await this.userRepository.getUsers();
     return users;
-  }
-
-  async getUser(getUserInput: GetUserInput): Promise<User> {
-    const user = await this.userRepository.findOne(getUserInput);
-    return user;
   }
 }

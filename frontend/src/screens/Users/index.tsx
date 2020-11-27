@@ -12,7 +12,13 @@ import { DrawerActions } from '@react-navigation/native';
 import ListUsers from './ListUsers';
 import EditUser from './EditUser';
 
-const SimpleStack = createStackNavigator();
+type SimpleStackParamList = {
+  '.': undefined;
+  ListUsers: undefined;
+  EditUser: { userId: string };
+};
+
+const SimpleStack = createStackNavigator<SimpleStackParamList>();
 
 export default function SimpleStackScreen({
   navigation,
@@ -63,6 +69,7 @@ export default function SimpleStackScreen({
         name="EditUser"
         component={EditUser}
         options={{ title: 'Edit User' }}
+        initialParams={{ userId: '' }}
       />
     </SimpleStack.Navigator>
   );
