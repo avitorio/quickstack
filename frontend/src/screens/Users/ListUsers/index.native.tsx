@@ -1,26 +1,35 @@
-import React, { memo } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import React, { memo, useContext, useEffect } from 'react';
+import { useQuery } from '@apollo/client';
 import { List } from 'react-native-paper';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 
 import Paragraph from '../../../components/Paragraph';
 import Section from '../../../components/List';
 import Background from '../../../components/Background';
-import { useNavigation } from '@react-navigation/native';
-import IUser from '../../../context/usersList/user.interface';
 
-const GET_USERS = gql`
-  query query {
-    getUsers {
-      id
-      email
-      role
-    }
-  }
-`;
+import IUser from '../../../context/usersList/user.interface';
+import { UsersListContext } from '../../../context';
+import { GET_USERS } from '../../../graphql/queries/getUsers';
 
 const Users: React.FC = () => {
+  useIsFocused();
   const navigation = useNavigation();
+  const { users, setUsers } = useContext(UsersListContext);
   const { loading, error, data } = useQuery(GET_USERS);
+
+  useEffect(() => {
+    if (data) {
+      const fetchedUsers =
+        data &&
+        data.getUsers.map((user: IUser) => ({
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          checked: false,
+        }));
+      setUsers(fetchedUsers);
+    }
+  }, [data]);
 
   return (
     <Background position="top" wrapperWidth="full">
@@ -28,7 +37,7 @@ const Users: React.FC = () => {
       {error && <Paragraph>{error.message}</Paragraph>}
       {data && (
         <Section>
-          {data.getUsers.map((user: IUser) => (
+          {users.map((user: IUser) => (
             <React.Fragment key={user.email}>
               <List.Item
                 title={user.email}

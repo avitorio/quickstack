@@ -1,5 +1,5 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { Checkbox, IconButton } from 'react-native-paper';
 import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -10,16 +10,7 @@ import Background from '../../../components/Background';
 
 import { UsersListContext } from '../../../context';
 import IUser from '../../../context/usersList/user.interface';
-
-const GET_USERS = gql`
-  query {
-    getUsers {
-      id
-      email
-      role
-    }
-  }
-`;
+import { GET_USERS } from '../../../graphql/queries/getUsers';
 
 const Users: React.FC = () => {
   const navigation = useNavigation();
