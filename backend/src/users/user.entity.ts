@@ -8,7 +8,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { Task } from '../tasks/task.entity';
-import { UserRole } from './user.type';
+import { UserRole } from './user-role.type';
 
 @Entity('users')
 @Unique(['email'])

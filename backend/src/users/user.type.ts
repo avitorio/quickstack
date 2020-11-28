@@ -11,8 +11,3 @@ export class UserType {
   @Field()
   role: string;
 }
-
-export enum UserRole {
-  ADMIN = 'admin',
-  MEMBER = 'member',
-}

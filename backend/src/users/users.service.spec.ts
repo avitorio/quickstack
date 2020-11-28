@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import {
   ConflictException,
+  ForbiddenException,
   InternalServerErrorException,
 } from '@nestjs/common';
 
@@ -8,7 +9,7 @@ import { UserRepository } from './user.repository';
 import { UsersService } from './users.service';
 import { BCryptHashProvider } from '../shared/providers/hash/provider/bcrypt-hash.provider';
 import { User } from './user.entity';
-import { UserRole } from './user.type';
+import { UserRole } from './user-role.type';
 
 const mockUser = new User();
 
@@ -217,6 +218,7 @@ describe('UserRepository', () => {
         id: 'askdmasdmasdkmasd',
         email: 'user@email.com',
       });
+      
       userRepository.findByEmail = jest.fn().mockResolvedValue(false);
       userRepository.save = jest.fn().mockResolvedValue(true);
       jest.spyOn(hashProvider, 'generateHash');
@@ -234,6 +236,90 @@ describe('UserRepository', () => {
       expect(usersService.updateUser).toHaveBeenCalled();
 
       expect(hashProvider.generateHash).not.toHaveBeenCalled();
+    });
+
+    it('should allow admin to update user password', async () => {
+      jest.spyOn(usersService, 'updateUser');
+
+      mockUser.email = 'admin@email.com';
+      mockUser.role = UserRole.ADMIN;
+
+      userRepository.findOne = jest.fn().mockResolvedValue({
+        id: 'askdmasdmasdkmasd',
+        email: 'user@email.com',
+      });
+      
+      userRepository.findByEmail = jest.fn().mockResolvedValue(false);
+      userRepository.save = jest.fn().mockResolvedValue(true);
+      jest.spyOn(hashProvider, 'generateHash');
+
+      expect(usersService.updateUser).not.toHaveBeenCalled();
+
+      await usersService.updateUser(
+        {
+          id: 'askdmasdmasdkmasd',
+          email: 'updated@email.com',
+          password: '123123'
+        },
+        mockUser,
+      );
+
+      expect(usersService.updateUser).toHaveBeenCalled();
+
+      expect(hashProvider.generateHash).toHaveBeenCalled();
+    });
+
+    it('should allow admin to update user role', async () => {
+      jest.spyOn(usersService, 'updateUser');
+
+      mockUser.email = 'admin@email.com';
+      mockUser.role = UserRole.ADMIN;
+
+      userRepository.findOne = jest.fn().mockResolvedValue({
+        id: 'askdmasdmasdkmasd',
+        email: 'user@email.com',
+        role: UserRole.MEMBER
+      });
+      
+      userRepository.findByEmail = jest.fn().mockResolvedValue(false);
+      userRepository.save = jest.fn().mockResolvedValue(true);
+
+      expect(usersService.updateUser).not.toHaveBeenCalled();
+
+      await usersService.updateUser(
+        {
+          id: 'askdmasdmasdkmasd',
+          email: 'updated@email.com',
+          role: UserRole.ADMIN
+        },
+        mockUser,
+      );
+
+      expect(usersService.updateUser).toHaveBeenCalled();
+
+      expect(userRepository.save).toHaveBeenCalledWith({
+        id: 'askdmasdmasdkmasd',
+        email: 'updated@email.com',
+        role: UserRole.ADMIN
+      });
+    });
+
+    it('should not allow member to update user role', async () => {
+      jest.spyOn(usersService, 'updateUser');
+
+      mockUser.email = 'admin@email.com';
+      mockUser.role = UserRole.MEMBER;
+
+      await expect(
+        usersService.updateUser(
+          {
+            id: 'askdmasdmasdkmasd',
+          email: 'updated@email.com',
+          role: UserRole.ADMIN
+          },
+          mockUser,
+        ),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 

@@ -4,6 +4,7 @@ import {
   Inject,
   HttpException,
   HttpStatus,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UserRepository } from '../users/user.repository';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,7 +16,7 @@ import { CreateUserInput } from './dto/create-user.input';
 import IHashProvider from '../shared/providers/hash/models/hash-provider.interface';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
-import { UserRole } from './user.type';
+import { UserRole } from './user-role.type';
 import { GetUserInput } from './dto/get-user.input';
 
 @Injectable()
@@ -57,12 +58,21 @@ export class UsersService {
     updateUserInput: UpdateUserInput,
     user: User,
   ): Promise<boolean> {
-    const { id, email, old_password, password } = updateUserInput;
+    const { id, email, old_password, password, role } = updateUserInput;
 
     const isAdmin = user.role === UserRole.ADMIN;
 
     if (isAdmin) {
       user = await this.userRepository.findOne(id);
+
+      // If role is defined, update user's role.
+      if (role) {
+        user.role = role;
+      }
+    }
+
+    if (role && !isAdmin) {
+      throw new ForbiddenException('You cannot update a user role.');
     }
 
     if (email !== user.email) {

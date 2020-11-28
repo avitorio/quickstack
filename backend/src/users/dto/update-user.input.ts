@@ -7,6 +7,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { InputType, Field } from '@nestjs/graphql';
+import { UserRole } from '../user-role.type';
 
 @InputType()
 export class UpdateUserInput {
@@ -35,8 +36,16 @@ export class UpdateUserInput {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  @MinLength(6)
+  @MinLength(6, {
+    message: 'Password is too short.',
+  })
   @MaxLength(20)
   @Field()
   password?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  @MinLength(3)
+  role?: UserRole;
 }

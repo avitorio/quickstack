@@ -6,10 +6,11 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
 import { GetUser } from './get-user.decorator';
 import { GqlAuthGuard } from '../auth/guards/gql-auth-guard';
-import { UserRole, UserType } from './user.type';
+import { UserType } from './user.type';
 import { hasRoles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { GetUserInput } from './dto/get-user.input';
+import { UserRole } from './user-role.type';
 
 const AuthGuard = new GqlAuthGuard();
 
