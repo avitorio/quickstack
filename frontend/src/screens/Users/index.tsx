@@ -60,7 +60,6 @@ export default function SimpleStackScreen({
                   onPress={() =>
                     navigation.dispatch(DrawerActions.openDrawer())
                   }
-                  accessibilityStates
                 />
               ),
         }}

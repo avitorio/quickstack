@@ -83,7 +83,6 @@ const Login: React.FC = () => {
         autoCompleteType="email"
         textContentType="emailAddress"
         keyboardType="email-address"
-        accessibilityStates
       />
 
       <TextInput
@@ -94,7 +93,6 @@ const Login: React.FC = () => {
         error={!!password.error}
         errorText={password.error}
         secureTextEntry
-        accessibilityStates
       />
 
       <View style={styles.forgotPassword}>
@@ -103,11 +101,7 @@ const Login: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      <Button
-        accessibilityStates
-        mode="contained"
-        onPress={() => _onLoginPressed(email, password)}
-      >
+      <Button mode="contained" onPress={() => _onLoginPressed(email, password)}>
         Login
       </Button>
 

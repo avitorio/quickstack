@@ -181,13 +181,7 @@ const EditUser: React.FC = () => {
     <Background>
       <Header>Profile</Header>
 
-      <TextInput
-        label="Id"
-        value={user.id}
-        disabled
-        returnKeyType="next"
-        accessibilityStates
-      />
+      <TextInput label="Id" value={user.id} disabled returnKeyType="next" />
 
       <TextInput
         label="Email"
@@ -202,7 +196,6 @@ const EditUser: React.FC = () => {
         autoCompleteType="email"
         textContentType="emailAddress"
         keyboardType="email-address"
-        accessibilityStates
       />
 
       <View
@@ -261,7 +254,6 @@ const EditUser: React.FC = () => {
         error={!!password.error}
         errorText={password.error}
         secureTextEntry
-        accessibilityStates
         blurOnSubmit={false}
         onSubmitEditing={() => Keyboard.dismiss()}
         textContentType={'oneTimeCode'}
@@ -277,7 +269,6 @@ const EditUser: React.FC = () => {
         error={!!confirmPassword.error}
         errorText={confirmPassword.error}
         secureTextEntry
-        accessibilityStates
         blurOnSubmit={false}
         onSubmitEditing={() => Keyboard.dismiss()}
         textContentType={'oneTimeCode'}
@@ -285,7 +276,6 @@ const EditUser: React.FC = () => {
 
       <Button
         disabled={disableUpdate}
-        accessibilityStates
         mode="contained"
         onPress={handleUpdateProfile}
       >

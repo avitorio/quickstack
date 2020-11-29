@@ -99,14 +99,12 @@ const ResetPassword = ({ route }: AppProps) => {
         error={!!password.error}
         errorText={password.error}
         secureTextEntry
-        accessibilityStates
       />
 
       <Button
         mode="contained"
         onPress={handleResetPassword}
         style={styles.button}
-        accessibilityStates
       >
         Reset Password
       </Button>

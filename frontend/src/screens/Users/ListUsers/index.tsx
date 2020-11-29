@@ -91,7 +91,6 @@ const Users: React.FC = () => {
                 <IconButton
                   icon="pencil"
                   size={20}
-                  accessibilityStates
                   onPress={() =>
                     navigation.navigate('EditUser', { userId: user.id })
                   }

@@ -96,7 +96,6 @@ const AppRoute: React.FC = (props) => {
                             <Appbar.Action
                               icon="menu"
                               onPress={() => navigation.toggleDrawer()}
-                              accessibilityStates
                             />
                           ),
                     }}

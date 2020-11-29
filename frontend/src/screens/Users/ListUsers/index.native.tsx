@@ -51,7 +51,6 @@ const Users: React.FC = () => {
                   borderBottomColor: 'gray',
                 }}
                 left={(props) => <List.Icon {...props} icon="account-circle" />}
-                accessibilityStates
               />
             </React.Fragment>
           ))}

@@ -153,7 +153,6 @@ const Profile: React.FC = () => {
         autoCompleteType="email"
         textContentType="emailAddress"
         keyboardType="email-address"
-        accessibilityStates
       />
 
       <TextInput
@@ -166,7 +165,6 @@ const Profile: React.FC = () => {
         error={!!oldPassword.error}
         errorText={oldPassword.error}
         secureTextEntry
-        accessibilityStates
         blurOnSubmit={false}
         onSubmitEditing={() => Keyboard.dismiss()}
         textContentType={'oneTimeCode'}
@@ -182,7 +180,6 @@ const Profile: React.FC = () => {
         error={!!password.error}
         errorText={password.error}
         secureTextEntry
-        accessibilityStates
         blurOnSubmit={false}
         onSubmitEditing={() => Keyboard.dismiss()}
         textContentType={'oneTimeCode'}
@@ -198,7 +195,6 @@ const Profile: React.FC = () => {
         error={!!confirmPassword.error}
         errorText={confirmPassword.error}
         secureTextEntry
-        accessibilityStates
         blurOnSubmit={false}
         onSubmitEditing={() => Keyboard.dismiss()}
         textContentType={'oneTimeCode'}
@@ -206,7 +202,6 @@ const Profile: React.FC = () => {
 
       <Button
         disabled={disableUpdate}
-        accessibilityStates
         mode="contained"
         onPress={handleUpdateProfile}
       >
