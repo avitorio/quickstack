@@ -55,7 +55,7 @@ export class PasswordRecoveryEmailService {
         template: resolve(__dirname, 'views', 'password-recovery-email.hbs'),
         context: {
           token,
-          appUrl: `${app.frontend}/reset-password`,
+          appUrl: `${process.env.FRONTEND_URL || app.frontend}/reset-password`,
         },
       })
       .then(() => {
