@@ -1,4 +1,10 @@
 {
+  "name": "quickstack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:avitorio/quickstack.git",
+  "author": "Andre Vitorio <andre@vitorio.net>",
+  "license": "MIT",
   "scripts": {
     "heroku-prebuild": "cd backend && yarn && yarn build",
     "start": "cd backend && yarn start"
