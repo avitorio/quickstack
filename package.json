@@ -7,6 +7,6 @@
   "license": "MIT",
   "scripts": {
     "heroku-prebuild": "cd backend && yarn && yarn build",
-    "start": "cd backend && yarn start"
+    "start": "cd backend && yarn start:prod"
   }
 }
