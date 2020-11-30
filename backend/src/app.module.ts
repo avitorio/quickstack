@@ -12,14 +12,14 @@ import { UsersModule } from './users/users.module';
 import { MailerConfig } from './config/mailer.config';
 import beautifyError from './utils/beautifyError';
 
-const serverConfig = config.get('server');
+const app = config.get('app');
 
 @Module({
   imports: [
     MailerModule.forRoot(MailerConfig),
     GraphQLModule.forRoot({
       cors: {
-        origin: serverConfig.origin,
+        origin: app.frontend,
         credentials: true,
       },
       autoSchemaFile: true,
