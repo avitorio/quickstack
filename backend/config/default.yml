@@ -11,3 +11,10 @@ db:
 
 jwt:
   expiresIn: 36000
+
+mail:
+  from: 'backend@quickstack.com'
+  host: 'smtp.ethereal.email'
+  port: 587
+  user: config.ethereal.username
+  pass: config.ethereal.password

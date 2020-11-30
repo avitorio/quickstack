@@ -1,0 +1,5 @@
+server:
+  origin: https://quickstack-backend.herokuapp.com
+
+db:
+  synchronize: false
