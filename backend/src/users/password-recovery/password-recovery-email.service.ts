@@ -12,7 +12,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { resolve } from 'path';
 import * as config from 'config';
 
-const app = config.get('app');
+const appConfig = config.get('app');
 
 interface IRequest {
   email: string;
@@ -55,7 +55,7 @@ export class PasswordRecoveryEmailService {
         template: resolve(__dirname, 'views', 'password-recovery-email.hbs'),
         context: {
           token,
-          appUrl: `${process.env.FRONTEND_URL || app.frontend}/reset-password`,
+          appUrl: `${process.env.FRONTEND_URL || appConfig.frontend}/reset-password`,
         },
       })
       .then(() => {

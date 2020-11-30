@@ -12,8 +12,8 @@ async function bootstrap() {
   if (process.env.NODE_ENV === 'development') {
     app.enableCors();
   } else {
-    app.enableCors({ origin: appConfig.frontend });
-    logger.log(`Accepting requests from origin "${appConfig.origin}"`);
+    app.enableCors({ origin: `${process.env.FRONTEND_URL || appConfig.frontend}` });
+    logger.log(`Accepting requests from origin "${process.env.FRONTEND_URL || appConfig.frontend}"`);
   }
 
   const port = process.env.PORT || serverConfig.port;
