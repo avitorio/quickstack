@@ -1,0 +1,13 @@
+app:
+  frontend: 'http://localhost:19006'
+
+server:
+  port: 3000
+
+db:
+  type: 'postgres'
+  port: '5432'
+  database: 'quickstack'
+
+jwt:
+  expiresIn: 36000
