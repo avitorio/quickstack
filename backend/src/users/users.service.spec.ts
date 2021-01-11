@@ -18,11 +18,27 @@ const mockCredentialsDto = {
   password: 'TestPassword',
 };
 
-const mockUserRepository = () => ({
-  findOne: jest.fn(),
-  findByEmail: jest.fn(),
-  create: jest.fn(),
-});
+const mockUserRepository = () => {
+  const user = new User();
+  const user2 = new User();
+
+  user.email = 'test@email.com';
+  user2.email = 'test2@email.com';
+
+  return {
+    findOne: jest.fn(),
+    findByEmail: jest.fn(),
+    create: jest.fn(),
+    createQueryBuilder: jest.fn(() => ({
+      orderBy: jest.fn().mockReturnThis(),
+      take: jest.fn(() => ({
+        skip: jest.fn(() => ({
+          getManyAndCount: jest.fn().mockReturnValue([user, user2]),
+        })),
+      })),
+    })),
+  };
+};
 
 describe('UserRepository', () => {
   let userRepository;
@@ -218,7 +234,7 @@ describe('UserRepository', () => {
         id: 'askdmasdmasdkmasd',
         email: 'user@email.com',
       });
-      
+
       userRepository.findByEmail = jest.fn().mockResolvedValue(false);
       userRepository.save = jest.fn().mockResolvedValue(true);
       jest.spyOn(hashProvider, 'generateHash');
@@ -248,7 +264,7 @@ describe('UserRepository', () => {
         id: 'askdmasdmasdkmasd',
         email: 'user@email.com',
       });
-      
+
       userRepository.findByEmail = jest.fn().mockResolvedValue(false);
       userRepository.save = jest.fn().mockResolvedValue(true);
       jest.spyOn(hashProvider, 'generateHash');
@@ -259,7 +275,7 @@ describe('UserRepository', () => {
         {
           id: 'askdmasdmasdkmasd',
           email: 'updated@email.com',
-          password: '123123'
+          password: '123123',
         },
         mockUser,
       );
@@ -278,9 +294,9 @@ describe('UserRepository', () => {
       userRepository.findOne = jest.fn().mockResolvedValue({
         id: 'askdmasdmasdkmasd',
         email: 'user@email.com',
-        role: UserRole.MEMBER
+        role: UserRole.MEMBER,
       });
-      
+
       userRepository.findByEmail = jest.fn().mockResolvedValue(false);
       userRepository.save = jest.fn().mockResolvedValue(true);
 
@@ -290,7 +306,7 @@ describe('UserRepository', () => {
         {
           id: 'askdmasdmasdkmasd',
           email: 'updated@email.com',
-          role: UserRole.ADMIN
+          role: UserRole.ADMIN,
         },
         mockUser,
       );
@@ -300,7 +316,7 @@ describe('UserRepository', () => {
       expect(userRepository.save).toHaveBeenCalledWith({
         id: 'askdmasdmasdkmasd',
         email: 'updated@email.com',
-        role: UserRole.ADMIN
+        role: UserRole.ADMIN,
       });
     });
 
@@ -314,8 +330,8 @@ describe('UserRepository', () => {
         usersService.updateUser(
           {
             id: 'askdmasdmasdkmasd',
-          email: 'updated@email.com',
-          role: UserRole.ADMIN
+            email: 'updated@email.com',
+            role: UserRole.ADMIN,
           },
           mockUser,
         ),
@@ -324,20 +340,33 @@ describe('UserRepository', () => {
   });
 
   describe('getUsers', () => {
-    it('should list all users', async () => {
-      jest.spyOn(usersService, 'getUsers');
-
+    it('should list 2 users', async () => {
       const user = new User();
       const user2 = new User();
 
       user.email = 'test@email.com';
       user2.email = 'test2@email.com';
 
-      userRepository.getUsers = jest.fn().mockResolvedValue([user, user2]);
+      const createQueryBuilder: any = {
+        orderBy: jest.fn().mockReturnThis(),
+        take: jest.fn(() => ({
+          skip: jest.fn(() => ({
+            getManyAndCount: jest.fn().mockReturnValue([[user, user2], 2]),
+          })),
+        })),
+      };
 
-      await usersService.getUsers();
+      jest
+        .spyOn(userRepository, 'createQueryBuilder')
+        .mockImplementation(() => createQueryBuilder);
 
-      expect(userRepository.getUsers).toHaveBeenCalled();
+      const paginatedResult = await usersService.getUsers({
+        page: 1,
+        limit: 1,
+      });
+
+      await expect(userRepository.createQueryBuilder).toHaveBeenCalled();
+      await expect(paginatedResult.items.length).toBe(2);
     });
   });
 
