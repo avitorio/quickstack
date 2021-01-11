@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,6 +13,7 @@ import { MailerConfig } from './config/mailer.config';
 import beautifyError from './utils/beautifyError';
 
 const appConfig = config.get('app');
+const debug = true;
 
 @Module({
   imports: [
@@ -24,10 +25,15 @@ const appConfig = config.get('app');
       },
       autoSchemaFile: true,
       context: ({ req }) => ({ req }),
-      debug: false,
+      debug,
       formatError: (error: GraphQLError) => {
-        const message = error.extensions.exception.response.message;
+        if (debug) {
+          const logger = new Logger('AppModule');
+          logger.log(`GraphQLError: ${error}`)
+        }
 
+        const message = error.extensions.exception.response.message;
+       
         // Check if error message comes as a string or an array
         const graphQLFormattedError: GraphQLFormattedError = {
           message: beautifyError(
@@ -44,4 +50,5 @@ const appConfig = config.get('app');
     UsersModule,
   ],
 })
+
 export class AppModule {}

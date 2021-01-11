@@ -12,12 +12,20 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
+
 import { CreateUserInput } from './dto/create-user.input';
 import IHashProvider from '../shared/providers/hash/models/hash-provider.interface';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
 import { UserRole } from './user-role.type';
 import { GetUserInput } from './dto/get-user.input';
+import { PaginatedUser } from './user.type';
+import { GetUsersInput } from './dto/get-users.input';
 
 @Injectable()
 export class UsersService {
@@ -121,8 +129,14 @@ export class UsersService {
     return user;
   }
 
-  async getUsers(): Promise<User[]> {
-    const users = await this.userRepository.getUsers();
-    return users;
+  async getUsers(getUsersInput: GetUsersInput): Promise<PaginatedUser> {
+    const queryBuilder = await this.userRepository.createQueryBuilder('c');
+    queryBuilder.orderBy('c.email', 'DESC'); // Or whatever you need to do
+    const { page, limit } = getUsersInput;
+
+    return await paginate<User>(queryBuilder, {
+      page,
+      limit,
+    });
   }
 }

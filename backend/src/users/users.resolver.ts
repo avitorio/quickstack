@@ -6,11 +6,12 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './user.entity';
 import { GetUser } from './get-user.decorator';
 import { GqlAuthGuard } from '../auth/guards/gql-auth-guard';
-import { UserType } from './user.type';
+import { PaginatedUser, UserType } from './user.type';
 import { hasRoles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { GetUserInput } from './dto/get-user.input';
 import { UserRole } from './user-role.type';
+import { GetUsersInput } from './dto/get-users.input';
 
 const AuthGuard = new GqlAuthGuard();
 
@@ -39,9 +40,12 @@ export class UsersResolver {
 
   @hasRoles(UserRole.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
-  @Query(() => [UserType])
-  getUsers(): Promise<User[]> {
-    return this.usersService.getUsers();
+  @Query(() => PaginatedUser)
+  getUsers(
+    @Args('getUsersInput', ValidationPipe)
+    getUsersInput: GetUsersInput,
+  ): Promise<PaginatedUser> {
+    return this.usersService.getUsers(getUsersInput);
   }
 
   @hasRoles(UserRole.ADMIN)
