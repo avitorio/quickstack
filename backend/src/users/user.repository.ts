@@ -12,13 +12,4 @@ export class UserRepository extends Repository<User> {
 
     return user;
   }
-
-  async getUsers(): Promise<User[]> {
-    try {
-      const users = this.find();
-      return users;
-    } catch (error) {
-      return [];
-    }
-  }
 }
