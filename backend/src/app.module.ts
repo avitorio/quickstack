@@ -13,7 +13,7 @@ import { MailerConfig } from './config/mailer.config';
 import beautifyError from './utils/beautifyError';
 
 const appConfig = config.get('app');
-const debug = true;
+const debug = process.env.NODE_ENV === 'development';
 
 @Module({
   imports: [
@@ -29,11 +29,11 @@ const debug = true;
       formatError: (error: GraphQLError) => {
         if (debug) {
           const logger = new Logger('AppModule');
-          logger.log(`GraphQLError: ${error}`)
+          logger.log(`GraphQLError: ${error}`);
         }
 
         const message = error.extensions.exception.response.message;
-       
+
         // Check if error message comes as a string or an array
         const graphQLFormattedError: GraphQLFormattedError = {
           message: beautifyError(
@@ -50,5 +50,4 @@ const debug = true;
     UsersModule,
   ],
 })
-
 export class AppModule {}
