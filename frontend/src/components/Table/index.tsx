@@ -5,6 +5,7 @@ import { theme } from '../../styles/themes/default';
 
 type Props = {
   children: React.ReactNode;
+  numeric?: boolean;
 };
 
 const Table = ({ children }: Props) => (
@@ -27,8 +28,17 @@ Table.Cell = ({ children, numeric }: Props) => (
   <DataTable.Cell numeric={numeric}>{children}</DataTable.Cell>
 );
 
-Table.Pagination = ({ children }: Props) => (
-  <DataTable.Pagination>{children}</DataTable.Pagination>
+type TablePaginationProps = {
+  children?: React.ReactNode;
+  page: number;
+  numberOfPages: number;
+  label?: React.ReactNode;
+  onPageChange: (page: number) => void;
+  theme?: ReactNativePaper.Theme;
+};
+
+Table.Pagination = (props: TablePaginationProps) => (
+  <DataTable.Pagination {...props}>{props.children}</DataTable.Pagination>
 );
 
 const styles = StyleSheet.create({

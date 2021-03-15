@@ -9,7 +9,6 @@ import Background from '../components/Background';
 
 const config = {
   screens: {
-    path: '',
     initialRouteName: 'Home',
     Home: '',
     Login: {

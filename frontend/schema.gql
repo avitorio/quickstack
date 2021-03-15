@@ -1,0 +1,133 @@
+"""Direct the client to resolve this field locally, either from the cache or local resolvers."""
+directive @client(
+  """
+  When true, the client will never use the cache for this value. See
+  https://www.apollographql.com/docs/react/essentials/local-state/#forcing-resolvers-with-clientalways-true
+  """
+  always: Boolean
+) on FIELD | FRAGMENT_DEFINITION | INLINE_FRAGMENT
+
+"""
+Export this locally resolved field as a variable to be used in the remainder of this query. See
+https://www.apollographql.com/docs/react/essentials/local-state/#using-client-fields-as-variables
+"""
+directive @export(
+  """The variable name to export this field as."""
+  as: String!
+) on FIELD
+
+"""
+Specify a custom store key for this result. See
+https://www.apollographql.com/docs/react/advanced/caching/#the-connection-directive
+"""
+directive @connection(
+  """Specify the store key."""
+  key: String!
+  """An array of query argument names to include in the generated custom store key."""
+  filter: [String!]
+) on FIELD
+
+type Query {
+  getUsers(getUsersInput: GetUsersInput!): PaginatedUser!
+  getUser(getUserInput: GetUserInput!): User!
+  getTaskById(id: String!): Task!
+  getTasks(filterDto: GetTasksFilterDto!): [Task!]!
+}
+
+input GetUsersInput {
+  limit: Float!
+  page: Float!
+  route: String
+}
+
+type PaginatedUser {
+  items: [User!]
+  meta: Meta!
+  links: Links!
+}
+
+type User {
+  id: ID!
+  email: String!
+  role: String!
+}
+
+type Meta {
+  itemCount: Int!
+  totalItems: Int!
+  itemsPerPage: Int!
+  totalPages: Int!
+  currentPage: Int!
+}
+
+type Links {
+  first: String!
+  previous: String!
+  next: String!
+  last: String!
+}
+
+input GetUserInput {
+  id: String!
+}
+
+type Task {
+  id: ID!
+  title: String!
+  description: String!
+  status: String!
+  user_id: [User!]!
+}
+
+input GetTasksFilterDto {
+  status: String
+  search: String
+}
+
+type Mutation {
+  signIn(authCredentialsInput: AuthCredentialsInput!): Session!
+  signUp(createUserInput: CreateUserInput!): Boolean!
+  updateUser(updateUserInput: UpdateUserInput!): Boolean!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): Boolean!
+  passwordRecoveryEmail(passwordRecoveryEmailInput: PasswordRecoveryEmailInput!): Boolean!
+  createTask(createTaskInput: CreateTaskInput!): Task!
+  deleteTask(id: String!): Boolean!
+  updateTaskStatus(status: String!, id: String!): Task!
+}
+
+input AuthCredentialsInput {
+  email: String!
+  password: String!
+}
+
+type Session {
+  token: String!
+  user: User!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  id: String
+  email: String!
+  old_password: String
+  password: String
+  role: String
+}
+
+input ResetPasswordInput {
+  token: String!
+  password: String!
+}
+
+input PasswordRecoveryEmailInput {
+  email: String!
+}
+
+input CreateTaskInput {
+  title: String!
+  description: String!
+}
