@@ -6,7 +6,7 @@ import {
   ApolloProvider as ApolloProviderOriginal,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ApolloProvider: React.FC = ({ children }) => {
   const httpLink = createHttpLink({
