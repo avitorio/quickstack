@@ -1,5 +1,5 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { Checkbox, IconButton } from 'react-native-paper';
 import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -11,23 +11,37 @@ import Background from '../../../components/Background';
 import { UsersListContext } from '../../../context';
 import IUser from '../../../context/usersList/user.interface';
 import { GET_USERS } from '../../../graphql/queries/getUsers';
+import { GetUsers_getUsers_meta } from '../../../graphql/generated/GetUsers';
+
+const limit = 2;
 
 const Users: React.FC = () => {
   const navigation = useNavigation();
   const { users, setUsers } = useContext(UsersListContext);
   const [checkAll, setCheckAll] = useState(false);
-  const { loading, error, data } = useQuery(GET_USERS);
+  const [page, setPage] = useState(0);
+  const [numberOfPages, setNumberOfPages] = useState(2);
+  const [meta, setMeta] = useState({
+    currentPage: 1,
+    itemCount: 5,
+    itemsPerPage: 5,
+    totalItems: 6,
+    totalPages: 2,
+  });
+
+  const [fetchUsers, { loading, error, data, fetchMore }] = useLazyQuery(
+    GET_USERS
+  );
 
   useEffect(() => {
     if (data) {
-      const fetchedUsers =
-        data &&
-        data.getUsers.map((user: IUser) => ({
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          checked: false,
-        }));
+      const fetchedUsers = data.getUsers.items.map((user: IUser) => ({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        checked: false,
+      }));
+      setMeta(data.getUsers.meta);
       setUsers(fetchedUsers);
     }
   }, [data]);
@@ -47,6 +61,10 @@ const Users: React.FC = () => {
     setUsers(newUsers);
   };
 
+  useEffect(() => {
+    fetchUsers({ variables: { limit, page: 1 } });
+  }, []);
+
   const handleCheckAll = () => {
     const newUsers = users.map((user) => ({
       ...user,
@@ -55,6 +73,16 @@ const Users: React.FC = () => {
 
     setUsers(newUsers);
     setCheckAll(!checkAll);
+  };
+
+  const getPaginationLabel = (
+    metaProps: Omit<GetUsers_getUsers_meta, '__typename'>
+  ) => {
+    const { currentPage, itemsPerPage, itemCount, totalItems } = metaProps;
+    const pageStart = currentPage * itemsPerPage - itemsPerPage + 1;
+    const pageEnd = (currentPage - 1) * itemsPerPage + itemCount;
+
+    return `${pageStart} - ${pageEnd} of ${totalItems}`;
   };
 
   return (
@@ -74,7 +102,7 @@ const Users: React.FC = () => {
             </Table.Title>
             <Table.Title>Email</Table.Title>
             <Table.Title>Role</Table.Title>
-            <Table.Title numeric>Options</Table.Title>
+            <Table.Title>Options</Table.Title>
           </Table.Header>
 
           {users.map((user) => (
@@ -87,7 +115,7 @@ const Users: React.FC = () => {
               </Table.Cell>
               <Table.Cell>{user.email}</Table.Cell>
               <Table.Cell>{user.role}</Table.Cell>
-              <Table.Cell numeric>
+              <Table.Cell>
                 <IconButton
                   icon="pencil"
                   size={20}
@@ -100,12 +128,28 @@ const Users: React.FC = () => {
           ))}
 
           <Table.Pagination
-            page={1}
-            numberOfPages={3}
-            onPageChange={(page) => {
-              console.log(page);
+            page={page}
+            numberOfPages={numberOfPages}
+            onPageChange={async (page) => {
+              setPage(page);
+              if (fetchMore) {
+                const { data } = await fetchMore({
+                  variables: { limit, page: page + 1 },
+                });
+                const fetchedUsers =
+                  data &&
+                  data.getUsers.items.map((user: IUser) => ({
+                    id: user.id,
+                    email: user.email,
+                    role: user.role,
+                    checked: false,
+                  }));
+                setMeta(data.getUsers.meta);
+                setNumberOfPages(data.getUsers.meta.totalPages);
+                setUsers(fetchedUsers);
+              }
             }}
-            label="1-2 of 6"
+            label={getPaginationLabel(meta)}
           />
         </Table>
       )}

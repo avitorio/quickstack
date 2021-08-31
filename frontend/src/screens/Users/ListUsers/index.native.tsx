@@ -1,5 +1,5 @@
 import React, { memo, useContext, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, useLazyQuery } from '@apollo/client';
 import { List } from 'react-native-paper';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 
@@ -11,17 +11,22 @@ import IUser from '../../../context/usersList/user.interface';
 import { UsersListContext } from '../../../context';
 import { GET_USERS } from '../../../graphql/queries/getUsers';
 
+const limit = 10;
+
 const Users: React.FC = () => {
   useIsFocused();
   const navigation = useNavigation();
   const { users, setUsers } = useContext(UsersListContext);
-  const { loading, error, data } = useQuery(GET_USERS);
+
+  const [fetchUsers, { loading, error, data, fetchMore }] = useLazyQuery(
+    GET_USERS
+  );
 
   useEffect(() => {
     if (data) {
       const fetchedUsers =
         data &&
-        data.getUsers.map((user: IUser) => ({
+        data.getUsers.items.map((user: IUser) => ({
           id: user.id,
           email: user.email,
           role: user.role,
@@ -30,6 +35,10 @@ const Users: React.FC = () => {
       setUsers(fetchedUsers);
     }
   }, [data]);
+
+  useEffect(() => {
+    fetchUsers({ variables: { limit, page: 1 } });
+  }, []);
 
   return (
     <Background position="top" wrapperWidth="full">
