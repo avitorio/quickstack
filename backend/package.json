@@ -42,7 +42,7 @@
     "graphql-tools": "^6.0.10",
     "handlebars": "^4.7.7",
     "nestjs-typeorm-paginate": "^2.2.6",
-    "nodemailer": "^6.4.10",
+    "nodemailer": "^6.6.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "pg": "^8.2.1",
