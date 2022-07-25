@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, ScaledSize } from 'react-native';
+import { Dimensions, ScaledSize, Platform } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialIcons } from '@expo/vector-icons';
 import {
@@ -46,6 +46,8 @@ type RootDrawerParamList = {
   [P in keyof typeof SCREENS]: undefined;
 };
 
+type Icon = 'dashboard' | 'people' | 'person' | 'power-settings-new';
+
 const Drawer = createDrawerNavigator<RootDrawerParamList>();
 const App = createStackNavigator();
 
@@ -58,15 +60,26 @@ const AppRoute: React.FC = (props) => {
       setDimensions(window);
     };
 
-    Dimensions.addEventListener('change', onDimensionsChange);
+    const dimensionChange = Dimensions.addEventListener(
+      'change',
+      onDimensionsChange
+    );
 
-    return () => Dimensions.removeEventListener('change', onDimensionsChange);
+    return () => dimensionChange.remove();
   }, []);
 
   const isLargeScreen = dimensions.width >= 1024;
 
   return (
-    <Drawer.Navigator drawerType={isLargeScreen ? 'permanent' : undefined}>
+    <Drawer.Navigator
+      screenOptions={{
+        drawerType: isLargeScreen
+          ? 'permanent'
+          : Platform.OS === 'ios'
+          ? 'slide'
+          : 'front',
+      }}
+    >
       {(Object.keys(SCREENS) as Array<keyof typeof SCREENS>).map((name) => (
         <React.Fragment key={name}>
           {SCREENS[name].requiredRoles.includes(user.role) && (
@@ -74,11 +87,12 @@ const AppRoute: React.FC = (props) => {
               name={name}
               options={{
                 title: SCREENS[name].title,
+                headerShown: !isLargeScreen,
                 drawerIcon: ({ size, color }) => (
                   <MaterialIcons
                     size={size}
                     color={color}
-                    name={SCREENS[name].icon}
+                    name={SCREENS[name].icon as Icon}
                   />
                 ),
               }}
@@ -90,6 +104,7 @@ const AppRoute: React.FC = (props) => {
                     component={SCREENS[name].component}
                     options={{
                       title: SCREENS[name].title,
+                      headerShown: isLargeScreen,
                       headerLeft: isLargeScreen
                         ? undefined
                         : () => (

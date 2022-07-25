@@ -93,7 +93,7 @@ const Users: React.FC = () => {
         <Table>
           <Table.Header>
             <Table.Title>
-              <View style={{ position: 'absolute', marginTop: -6 }}>
+              <View style={{ position: 'absolute', marginTop: -18 }}>
                 <Checkbox
                   status={checkAll ? 'checked' : 'unchecked'}
                   onPress={handleCheckAll}

@@ -52,6 +52,7 @@ export default function SimpleStackScreen({
         component={ListUsers}
         options={{
           title: 'Users',
+          headerShown: isLargeScreen,
           headerLeft: isLargeScreen
             ? undefined
             : () => (
