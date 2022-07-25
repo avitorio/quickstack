@@ -40,7 +40,7 @@
     "date-fns": "^2.14.0",
     "graphql": "^15.5.2",
     "graphql-tools": "^6.0.10",
-    "handlebars": "^4.7.6",
+    "handlebars": "^4.7.7",
     "nestjs-typeorm-paginate": "^2.2.6",
     "nodemailer": "^6.4.10",
     "passport": "^0.4.1",
